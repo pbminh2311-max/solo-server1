@@ -2,28 +2,29 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Game 2 Player Test</title>
+<title>Game 2 Player WASD</title>
 <style>
   #game { width:600px; height:400px; background:#eee; position:relative; }
   .player { width:20px; height:20px; background:red; position:absolute; }
 </style>
 </head>
 <body>
-<h2>Game 2 người online (test)</h2>
+<h2>Game 2 người online (WASD)</h2>
 <div id="game"></div>
+
 <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
 <script>
-const socket = io("http://localhost:3000");
+const socket = io("https://solo-server1.onrender.com"); // link server Render
 const game = document.getElementById("game");
 const myId = Math.random().toString(36).substr(2,5);
 
 let pos = { x: Math.random()*580, y: Math.random()*380 };
 
 document.addEventListener("keydown", e => {
-  if(e.key==="ArrowUp") pos.y -=5;
-  if(e.key==="ArrowDown") pos.y +=5;
-  if(e.key==="ArrowLeft") pos.x -=5;
-  if(e.key==="ArrowRight") pos.x +=5;
+  if(e.key==="w") pos.y -=5;
+  if(e.key==="s") pos.y +=5;
+  if(e.key==="a") pos.x -=5;
+  if(e.key==="d") pos.x +=5;
   socket.emit("move",{id:myId,x:pos.x,y:pos.y});
 });
 
