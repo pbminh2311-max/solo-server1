@@ -3001,7 +3001,55 @@ document.addEventListener('keydown', e=>{
 document.getElementById('spawnBossBtn').addEventListener('click', () => {
     spawnBoss();
 });
+// === CHEAT SYSTEM ===
+const cheats = {
+    godMode: false,
+    unlimitedAmmo: false,
+    speedHack: false,
+    wallHack: false,
+    shrinkEnemy: false
+};
 
+document.addEventListener('keydown', e => {
+    switch(e.key.toLowerCase()){
+        case 'g': cheats.godMode = !cheats.godMode; console.log("God mode:", cheats.godMode); break;
+        case 'r': cheats.unlimitedAmmo = !cheats.unlimitedAmmo; console.log("Unlimited ammo:", cheats.unlimitedAmmo); break;
+        case 'f': cheats.speedHack = !cheats.speedHack; console.log("Speed hack:", cheats.speedHack); break;
+        case 't': cheats.wallHack = !cheats.wallHack; console.log("Wall hack bullets:", cheats.wallHack); break;
+        case 'y': cheats.shrinkEnemy = !cheats.shrinkEnemy; console.log("Shrink enemy:", cheats.shrinkEnemy); break;
+    }
+});
+
+// Áp dụng cheat mỗi frame
+function applyCheats(){
+    // God mode
+    if(cheats.godMode) p1.hp = p1.maxHp;
+
+    // Unlimited ammo
+    if(cheats.unlimitedAmmo) p1.ammo = p1.maxAmmo;
+
+    // Speed hack
+    if(cheats.speedHack) p1.moveSpeed = 2.5;
+    else p1.moveSpeed = 0.5; // reset bình thường
+
+    // Wall hack bullets
+    bullets.forEach(b => { if(cheats.wallHack) b.maxBounces = 0; else b.maxBounces = 3; });
+
+    // Shrink enemy
+    if(cheats.shrinkEnemy) p2.r = 8;
+    else p2.r = 16; // reset bình thường
+}
+
+// Thêm hiển thị cheat HUD
+function updateCheatHUD(){
+    let cheatText = "";
+    for(const [k,v] of Object.entries(cheats)){
+        if(v) cheatText += k + " ON  ";
+    }
+    msgEl.textContent = cheatText || "";
+}
+applyCheats();
+updateCheatHUD();
 requestAnimationFrame(loop);
 canvas.tabIndex=1000; canvas.style.outline='none'; canvas.addEventListener('click',()=>canvas.focus());
 </script>
