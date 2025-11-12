@@ -2,45 +2,53 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Game 2 Player WASD</title>
+<title>Game Tank 2 Player</title>
 <style>
-  #game { width:600px; height:400px; background:#eee; position:relative; }
-  .player { width:20px; height:20px; background:red; position:absolute; }
+  #game { width:600px; height:400px; background:#ccc; position:relative; overflow:hidden; }
+  .tank { width:30px; height:30px; background:green; position:absolute; }
+  .bullet { width:5px; height:5px; background:black; position:absolute; }
 </style>
 </head>
 <body>
-<h2>Game 2 người online (WASD)</h2>
+<h2>Tank 2 Player Online</h2>
 <div id="game"></div>
-
 <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
 <script>
-const socket = io("https://solo-server1.onrender.com"); // link server Render
+const socket = io("https://solo-server1.onrender.com");
 const game = document.getElementById("game");
 const myId = Math.random().toString(36).substr(2,5);
 
-let pos = { x: Math.random()*580, y: Math.random()*380 };
+let pos = { x: Math.random()*570, y: Math.random()*370, dir:"up" };
 
 document.addEventListener("keydown", e => {
-  if(e.key==="w") pos.y -=5;
-  if(e.key==="s") pos.y +=5;
-  if(e.key==="a") pos.x -=5;
-  if(e.key==="d") pos.x +=5;
-  socket.emit("move",{id:myId,x:pos.x,y:pos.y});
+  if(e.key==="w"){ pos.y -=5; pos.dir="up"; }
+  if(e.key==="s"){ pos.y +=5; pos.dir="down"; }
+  if(e.key==="a"){ pos.x -=5; pos.dir="left"; }
+  if(e.key==="d"){ pos.x +=5; pos.dir="right"; }
+  if(e.key===" ") socket.emit("shoot", { x: pos.x+12, y: pos.y+12, dir: pos.dir });
+  socket.emit("move",{id:myId, ...pos});
 });
 
-socket.on("updatePlayers", players=>{
+socket.on("updateGame", data=>{
   game.innerHTML="";
-  for(let id in players){
-    const p=document.createElement("div");
-    p.className="player";
-    p.style.left = players[id].x + "px";
-    p.style.top = players[id].y + "px";
-    p.style.background = id===myId?"blue":"red";
-    game.appendChild(p);
+  // vẽ tank
+  for(let id in data.players){
+    const t=document.createElement("div");
+    t.className="tank";
+    t.style.left = data.players[id].x + "px";
+    t.style.top = data.players[id].y + "px";
+    t.style.background = id===myId?"blue":"red";
+    game.appendChild(t);
   }
+  // vẽ đạn
+  data.bullets.forEach(b=>{
+    const bl=document.createElement("div");
+    bl.className="bullet";
+    bl.style.left = b.x + "px";
+    bl.style.top = b.y + "px";
+    game.appendChild(bl);
+  });
 });
-
-socket.on("connect_error", err => console.log("Kết nối lỗi:", err.message));
 </script>
 </body>
 </html>
