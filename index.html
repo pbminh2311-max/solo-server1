@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Tank 2 Người</title>
+    <title>Game Tank 2 Người - Online</title>
     <style>
         * {
             margin: 0;
@@ -12,7 +12,7 @@
         }
         
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: #fff;
             min-height: 100vh;
@@ -20,10 +20,11 @@
             flex-direction: column;
             align-items: center;
             padding: 20px;
+            overflow-x: hidden;
         }
         
         .container {
-            max-width: 1000px;
+            max-width: 1100px;
             width: 100%;
             display: flex;
             flex-direction: column;
@@ -32,53 +33,76 @@
         
         header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
         
         h1 {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             margin-bottom: 10px;
             background: linear-gradient(90deg, #ff7e5f, #feb47b);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            letter-spacing: 1px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #a0a0c0;
+            margin-bottom: 10px;
         }
         
         .game-info {
             display: flex;
             justify-content: space-between;
             width: 100%;
-            margin-bottom: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
         }
         
         .player-info {
             display: flex;
             flex-direction: column;
             align-items: center;
+            flex: 1;
         }
         
         .player-name {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            padding: 8px 15px;
+            border-radius: 8px;
+            width: 100%;
+            text-align: center;
         }
         
         .player-1 .player-name {
+            background: linear-gradient(90deg, rgba(255, 82, 82, 0.3), rgba(255, 126, 95, 0.3));
             color: #ff7e5f;
+            border: 2px solid #ff5252;
         }
         
         .player-2 .player-name {
+            background: linear-gradient(90deg, rgba(33, 150, 243, 0.3), rgba(106, 137, 204, 0.3));
             color: #6a89cc;
+            border: 2px solid #2196f3;
         }
         
         .player-score {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-top: 5px;
         }
         
         .game-status {
@@ -86,89 +110,142 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            flex: 1;
         }
         
         #statusMessage {
-            font-size: 1.2rem;
-            margin-bottom: 10px;
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            text-align: center;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         #startButton {
             background: linear-gradient(90deg, #ff7e5f, #feb47b);
             border: none;
             color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-size: 1rem;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(255, 126, 95, 0.3);
         }
         
         #startButton:hover {
-            transform: scale(1.05);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(255, 126, 95, 0.4);
         }
         
         .game-area {
             display: flex;
             width: 100%;
-            gap: 20px;
+            gap: 25px;
+            margin-bottom: 25px;
         }
         
         #gameCanvas {
             background: #0f3460;
-            border-radius: 10px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
             flex: 1;
+            border: 3px solid rgba(255, 255, 255, 0.1);
         }
         
         .controls {
-            width: 250px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 280px;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
         }
         
         .control-section {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
         
         .control-section h3 {
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             color: #feb47b;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            padding-bottom: 5px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 8px;
+            font-size: 1.3rem;
+        }
+        
+        .key-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .key-description {
+            flex: 1;
         }
         
         .key {
             display: inline-block;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 5px 10px;
-            border-radius: 5px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 8px 12px;
+            border-radius: 8px;
             margin: 0 5px;
             font-family: monospace;
             border: 1px solid rgba(255, 255, 255, 0.2);
+            min-width: 50px;
+            text-align: center;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
         
         .instructions {
             margin-top: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 25px;
+            border-radius: 15px;
             width: 100%;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
         }
         
         .instructions h2 {
             color: #feb47b;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 1.6rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
         }
         
         .instructions p {
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+        
+        .instructions ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
             line-height: 1.5;
         }
         
-        @media (max-width: 768px) {
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #a0a0c0;
+            font-size: 0.9rem;
+            width: 100%;
+            padding: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        @media (max-width: 900px) {
             .game-area {
                 flex-direction: column;
             }
@@ -176,14 +253,29 @@
             .controls {
                 width: 100%;
             }
+            
+            #gameCanvas {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .game-info {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Game Tank 2 Người</h1>
-            <p>Chiến đấu với bạn bè trong trận chiến xe tăng đầy kịch tính!</p>
+            <h1>Game Tank 2 Người Online</h1>
+            <p class="subtitle">Chiến đấu với bạn bè trong trận chiến xe tăng đầy kịch tính!</p>
         </header>
         
         <div class="game-info">
@@ -204,19 +296,55 @@
         </div>
         
         <div class="game-area">
-            <canvas id="gameCanvas" width="700" height="500"></canvas>
+            <canvas id="gameCanvas" width="800" height="500"></canvas>
             
             <div class="controls">
                 <div class="control-section">
                     <h3>Điều khiển Xe Tăng Đỏ</h3>
-                    <p>Di chuyển: <span class="key">W</span> <span class="key">A</span> <span class="key">S</span> <span class="key">D</span></p>
-                    <p>Bắn: <span class="key">Space</span></p>
+                    <div class="key-container">
+                        <div class="key-description">Di chuyển lên:</div>
+                        <div class="key">W</div>
+                    </div>
+                    <div class="key-container">
+                        <div class="key-description">Di chuyển xuống:</div>
+                        <div class="key">S</div>
+                    </div>
+                    <div class="key-container">
+                        <div class="key-description">Di chuyển trái:</div>
+                        <div class="key">A</div>
+                    </div>
+                    <div class="key-container">
+                        <div class="key-description">Di chuyển phải:</div>
+                        <div class="key">D</div>
+                    </div>
+                    <div class="key-container">
+                        <div class="key-description">Bắn:</div>
+                        <div class="key">Space</div>
+                    </div>
                 </div>
                 
                 <div class="control-section">
                     <h3>Điều khiển Xe Tăng Xanh</h3>
-                    <p>Di chuyển: <span class="key">↑</span> <span class="key">←</span> <span class="key">↓</span> <span class="key">→</span></p>
-                    <p>Bắn: <span class="key">Enter</span></p>
+                    <div class="key-container">
+                        <div class="key-description">Di chuyển lên:</div>
+                        <div class="key">↑</div>
+                    </div>
+                    <div class="key-container">
+                        <div class="key-description">Di chuyển xuống:</div>
+                        <div class="key">↓</div>
+                    </div>
+                    <div class="key-container">
+                        <div class="key-description">Di chuyển trái:</div>
+                        <div class="key">←</div>
+                    </div>
+                    <div class="key-container">
+                        <div class="key-description">Di chuyển phải:</div>
+                        <div class="key">→</div>
+                    </div>
+                    <div class="key-container">
+                        <div class="key-description">Bắn:</div>
+                        <div class="key">Enter</div>
+                    </div>
                 </div>
                 
                 <div class="control-section">
@@ -235,6 +363,11 @@
             <p>2. Di chuyển xe tăng để tránh đạn của đối thủ và tìm cơ hội tấn công.</p>
             <p>3. Bắn trúng đối thủ để ghi điểm. Người chơi đầu tiên đạt 5 điểm sẽ chiến thắng.</p>
             <p>4. Tránh va chạm với tường và đạn của đối thủ.</p>
+            <p>5. Sử dụng các chướng ngại vật làm nơi ẩn nấp và phục kích đối thủ.</p>
+        </div>
+        
+        <div class="footer">
+            Game Tank 2 Người Online - Được tạo để triển khai trên Render
         </div>
     </div>
 
@@ -272,12 +405,18 @@
                 this.bullets = [];
                 this.cooldown = 0;
                 this.cooldownMax = 20; // Thời gian chờ giữa các lần bắn
+                this.health = 3;
             }
             
             draw() {
                 // Vẽ thân xe tăng
                 ctx.fillStyle = this.color;
                 ctx.fillRect(this.x, this.y, this.width, this.height);
+                
+                // Vẽ viền xe tăng
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(this.x, this.y, this.width, this.height);
                 
                 // Vẽ nòng súng
                 ctx.fillStyle = '#333';
@@ -343,6 +482,20 @@
                 if (this.y < 0) this.y = 0;
                 if (this.y + this.height > GAME_HEIGHT) this.y = GAME_HEIGHT - this.height;
                 
+                // Kiểm tra va chạm với chướng ngại vật
+                obstacles.forEach(obstacle => {
+                    if (this.x < obstacle.x + obstacle.width &&
+                        this.x + this.width > obstacle.x &&
+                        this.y < obstacle.y + obstacle.height &&
+                        this.y + this.height > obstacle.y) {
+                        // Đẩy xe tăng ra khỏi chướng ngại vật
+                        if (this.direction === 0) this.y = obstacle.y + obstacle.height;
+                        if (this.direction === 1) this.x = obstacle.x - this.width;
+                        if (this.direction === 2) this.y = obstacle.y - this.height;
+                        if (this.direction === 3) this.x = obstacle.x + obstacle.width;
+                    }
+                });
+                
                 // Xử lý bắn đạn
                 if (this.cooldown > 0) {
                     this.cooldown--;
@@ -376,8 +529,17 @@
                         checkWinCondition();
                     }
                     
-                    // Xóa đạn nếu ra khỏi màn hình
-                    if (bullet.x < 0 || bullet.x > GAME_WIDTH || bullet.y < 0 || bullet.y > GAME_HEIGHT) {
+                    // Kiểm tra va chạm với chướng ngại vật
+                    let hitObstacle = false;
+                    obstacles.forEach(obstacle => {
+                        if (bullet.x > obstacle.x && bullet.x < obstacle.x + obstacle.width &&
+                            bullet.y > obstacle.y && bullet.y < obstacle.y + obstacle.height) {
+                            hitObstacle = true;
+                        }
+                    });
+                    
+                    // Xóa đạn nếu ra khỏi màn hình hoặc chạm chướng ngại vật
+                    if (bullet.x < 0 || bullet.x > GAME_WIDTH || bullet.y < 0 || bullet.y > GAME_HEIGHT || hitObstacle) {
                         this.bullets.splice(index, 1);
                     }
                 });
@@ -430,12 +592,39 @@
             
             draw() {
                 ctx.fillStyle = '#FFD700';
-                ctx.fillRect(this.x, this.y, this.width, this.height);
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.width/2, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Hiệu ứng ánh sáng cho đạn
+                ctx.fillStyle = 'rgba(255, 255, 200, 0.6)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.width/3, 0, Math.PI * 2);
+                ctx.fill();
             }
             
             update() {
                 this.x += this.speedX;
                 this.y += this.speedY;
+            }
+        }
+        
+        // Đối tượng chướng ngại vật
+        class Obstacle {
+            constructor(x, y, width, height) {
+                this.x = x;
+                this.y = y;
+                this.width = width;
+                this.height = height;
+            }
+            
+            draw() {
+                ctx.fillStyle = '#37474F';
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+                
+                // Hiệu ứng bề mặt chướng ngại vật
+                ctx.fillStyle = '#455A64';
+                ctx.fillRect(this.x + 5, this.y + 5, this.width - 10, this.height - 10);
             }
         }
         
@@ -456,11 +645,25 @@
             fire: 'Enter'
         });
         
+        // Tạo chướng ngại vật
+        const obstacles = [
+            new Obstacle(300, 100, 100, 100),
+            new Obstacle(200, 300, 100, 100),
+            new Obstacle(400, 300, 100, 100),
+            new Obstacle(100, 200, 80, 80),
+            new Obstacle(600, 200, 80, 80)
+        ];
+        
         // Xử lý sự kiện bàn phím
         const keys = {};
         
         window.addEventListener('keydown', (e) => {
             keys[e.code] = true;
+            
+            // Ngăn hành vi mặc định của phím Space và Enter
+            if (e.code === 'Space' || e.code === 'Enter') {
+                e.preventDefault();
+            }
         });
         
         window.addEventListener('keyup', (e) => {
@@ -492,10 +695,9 @@
             }
             
             // Vẽ chướng ngại vật
-            ctx.fillStyle = '#37474F';
-            ctx.fillRect(300, 100, 100, 100);
-            ctx.fillRect(200, 300, 100, 100);
-            ctx.fillRect(400, 300, 100, 100);
+            obstacles.forEach(obstacle => {
+                obstacle.draw();
+            });
         }
         
         // Kiểm tra điều kiện thắng
@@ -529,6 +731,19 @@
             if (gameOver) {
                 gameRunning = false;
                 startButton.textContent = 'CHƠI LẠI';
+                
+                // Hiển thị thông báo chiến thắng lớn
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+                
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 40px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(winner === 1 ? 'Xe Tăng Đỏ Thắng!' : 'Xe Tăng Xanh Thắng!', GAME_WIDTH/2, GAME_HEIGHT/2 - 30);
+                
+                ctx.font = '24px Arial';
+                ctx.fillText('Nhấn "Chơi Lại" để bắt đầu ván mới', GAME_WIDTH/2, GAME_HEIGHT/2 + 30);
+                
                 return;
             }
             
