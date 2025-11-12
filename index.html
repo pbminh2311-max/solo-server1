@@ -2,50 +2,44 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Game 2 Player</title>
+<title>Game 2 Player Test</title>
 <style>
-  body { font-family: sans-serif; }
-  #game { width: 600px; height: 400px; background: #eee; position: relative; }
-  .player { width: 20px; height: 20px; background: red; position: absolute; }
+  #game { width:600px; height:400px; background:#eee; position:relative; }
+  .player { width:20px; height:20px; background:red; position:absolute; }
 </style>
 </head>
 <body>
-<h2>Game 2 người online</h2>
+<h2>Game 2 người online (test)</h2>
 <div id="game"></div>
-
 <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
 <script>
-const socket = io("https://solo-server1.onrender.com"); // link server Render
+const socket = io("http://localhost:3000");
 const game = document.getElementById("game");
-const myId = Math.random().toString(36).substr(2, 5);
+const myId = Math.random().toString(36).substr(2,5);
 
-// key di chuyển
-let pos = { x: Math.random() * 580, y: Math.random() * 380 };
+let pos = { x: Math.random()*580, y: Math.random()*380 };
 
-document.addEventListener("keydown", (e) => {
-  if (e.key === "ArrowUp") pos.y -= 5;
-  if (e.key === "ArrowDown") pos.y += 5;
-  if (e.key === "ArrowLeft") pos.x -= 5;
-  if (e.key === "ArrowRight") pos.x += 5;
-  socket.emit("move", { id: myId, x: pos.x, y: pos.y });
+document.addEventListener("keydown", e => {
+  if(e.key==="ArrowUp") pos.y -=5;
+  if(e.key==="ArrowDown") pos.y +=5;
+  if(e.key==="ArrowLeft") pos.x -=5;
+  if(e.key==="ArrowRight") pos.x +=5;
+  socket.emit("move",{id:myId,x:pos.x,y:pos.y});
 });
 
-socket.on("updatePlayers", (players) => {
-  game.innerHTML = ""; // xóa hết trước khi vẽ lại
-  for (let id in players) {
-    const p = document.createElement("div");
-    p.className = "player";
+socket.on("updatePlayers", players=>{
+  game.innerHTML="";
+  for(let id in players){
+    const p=document.createElement("div");
+    p.className="player";
     p.style.left = players[id].x + "px";
     p.style.top = players[id].y + "px";
-    p.style.background = id === myId ? "blue" : "red";
+    p.style.background = id===myId?"blue":"red";
     game.appendChild(p);
   }
 });
 
-// debug lỗi kết nối
-socket.on("connect_error", (err) => {
-  console.log("Lỗi kết nối:", err.message);
-});
+socket.on("connect_error", err => console.log("Kết nối lỗi:", err.message));
 </script>
 </body>
 </html>
