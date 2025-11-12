@@ -1,15 +1,575 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2 Player Tanks</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Game Tank 2 Người</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .player-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .player-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .player-1 .player-name {
+            color: #ff7e5f;
+        }
+        
+        .player-2 .player-name {
+            color: #6a89cc;
+        }
+        
+        .player-score {
+            font-size: 1.5rem;
+        }
+        
+        .game-status {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #statusMessage {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        
+        #startButton {
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        #startButton:hover {
+            transform: scale(1.05);
+        }
+        
+        .game-area {
+            display: flex;
+            width: 100%;
+            gap: 20px;
+        }
+        
+        #gameCanvas {
+            background: #0f3460;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            flex: 1;
+        }
+        
+        .controls {
+            width: 250px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .control-section {
+            margin-bottom: 20px;
+        }
+        
+        .control-section h3 {
+            margin-bottom: 10px;
+            color: #feb47b;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 5px;
+        }
+        
+        .key {
+            display: inline-block;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin: 0 5px;
+            font-family: monospace;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .instructions {
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            width: 100%;
+        }
+        
+        .instructions h2 {
+            color: #feb47b;
+            margin-bottom: 10px;
+        }
+        
+        .instructions p {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        
+        @media (max-width: 768px) {
+            .game-area {
+                flex-direction: column;
+            }
+            
+            .controls {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div id="gameContainer">
-        <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <div class="container">
+        <header>
+            <h1>Game Tank 2 Người</h1>
+            <p>Chiến đấu với bạn bè trong trận chiến xe tăng đầy kịch tính!</p>
+        </header>
+        
+        <div class="game-info">
+            <div class="player-info player-1">
+                <div class="player-name">Xe Tăng Đỏ</div>
+                <div class="player-score">Điểm: <span id="score1">0</span></div>
+            </div>
+            
+            <div class="game-status">
+                <div id="statusMessage">Nhấn BẮT ĐẦU để chơi</div>
+                <button id="startButton">BẮT ĐẦU</button>
+            </div>
+            
+            <div class="player-info player-2">
+                <div class="player-name">Xe Tăng Xanh</div>
+                <div class="player-score">Điểm: <span id="score2">0</span></div>
+            </div>
+        </div>
+        
+        <div class="game-area">
+            <canvas id="gameCanvas" width="700" height="500"></canvas>
+            
+            <div class="controls">
+                <div class="control-section">
+                    <h3>Điều khiển Xe Tăng Đỏ</h3>
+                    <p>Di chuyển: <span class="key">W</span> <span class="key">A</span> <span class="key">S</span> <span class="key">D</span></p>
+                    <p>Bắn: <span class="key">Space</span></p>
+                </div>
+                
+                <div class="control-section">
+                    <h3>Điều khiển Xe Tăng Xanh</h3>
+                    <p>Di chuyển: <span class="key">↑</span> <span class="key">←</span> <span class="key">↓</span> <span class="key">→</span></p>
+                    <p>Bắn: <span class="key">Enter</span></p>
+                </div>
+                
+                <div class="control-section">
+                    <h3>Luật chơi</h3>
+                    <p>• Tránh đạn của đối thủ</p>
+                    <p>• Bắn trúng đối thủ để ghi điểm</p>
+                    <p>• Mỗi lần bắn trúng: +1 điểm</p>
+                    <p>• Ai đạt 5 điểm trước sẽ thắng!</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h2>Hướng dẫn chơi</h2>
+            <p>1. Mỗi người chơi điều khiển một xe tăng với các phím tương ứng.</p>
+            <p>2. Di chuyển xe tăng để tránh đạn của đối thủ và tìm cơ hội tấn công.</p>
+            <p>3. Bắn trúng đối thủ để ghi điểm. Người chơi đầu tiên đạt 5 điểm sẽ chiến thắng.</p>
+            <p>4. Tránh va chạm với tường và đạn của đối thủ.</p>
+        </div>
     </div>
-    <script src="script.js"></script>
+
+    <script>
+        // Lấy các phần tử DOM
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const startButton = document.getElementById('startButton');
+        const statusMessage = document.getElementById('statusMessage');
+        const score1Element = document.getElementById('score1');
+        const score2Element = document.getElementById('score2');
+        
+        // Kích thước game
+        const GAME_WIDTH = canvas.width;
+        const GAME_HEIGHT = canvas.height;
+        
+        // Trạng thái game
+        let gameRunning = false;
+        let score1 = 0;
+        let score2 = 0;
+        let gameOver = false;
+        let winner = null;
+        
+        // Đối tượng xe tăng
+        class Tank {
+            constructor(x, y, width, height, color, controls) {
+                this.x = x;
+                this.y = y;
+                this.width = width;
+                this.height = height;
+                this.color = color;
+                this.speed = 5;
+                this.direction = 0; // Hướng (0: lên, 1: phải, 2: xuống, 3: trái)
+                this.controls = controls;
+                this.bullets = [];
+                this.cooldown = 0;
+                this.cooldownMax = 20; // Thời gian chờ giữa các lần bắn
+            }
+            
+            draw() {
+                // Vẽ thân xe tăng
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+                
+                // Vẽ nòng súng
+                ctx.fillStyle = '#333';
+                let gunX, gunY, gunWidth, gunHeight;
+                
+                switch(this.direction) {
+                    case 0: // Lên
+                        gunX = this.x + this.width/2 - 5;
+                        gunY = this.y - 15;
+                        gunWidth = 10;
+                        gunHeight = 15;
+                        break;
+                    case 1: // Phải
+                        gunX = this.x + this.width;
+                        gunY = this.y + this.height/2 - 5;
+                        gunWidth = 15;
+                        gunHeight = 10;
+                        break;
+                    case 2: // Xuống
+                        gunX = this.x + this.width/2 - 5;
+                        gunY = this.y + this.height;
+                        gunWidth = 10;
+                        gunHeight = 15;
+                        break;
+                    case 3: // Trái
+                        gunX = this.x - 15;
+                        gunY = this.y + this.height/2 - 5;
+                        gunWidth = 15;
+                        gunHeight = 10;
+                        break;
+                }
+                
+                ctx.fillRect(gunX, gunY, gunWidth, gunHeight);
+                
+                // Vẽ đạn
+                this.bullets.forEach(bullet => {
+                    bullet.draw();
+                });
+            }
+            
+            update(keys) {
+                // Di chuyển xe tăng
+                if (keys[this.controls.up]) {
+                    this.direction = 0;
+                    this.y -= this.speed;
+                }
+                if (keys[this.controls.down]) {
+                    this.direction = 2;
+                    this.y += this.speed;
+                }
+                if (keys[this.controls.left]) {
+                    this.direction = 3;
+                    this.x -= this.speed;
+                }
+                if (keys[this.controls.right]) {
+                    this.direction = 1;
+                    this.x += this.speed;
+                }
+                
+                // Giới hạn trong màn hình
+                if (this.x < 0) this.x = 0;
+                if (this.x + this.width > GAME_WIDTH) this.x = GAME_WIDTH - this.width;
+                if (this.y < 0) this.y = 0;
+                if (this.y + this.height > GAME_HEIGHT) this.y = GAME_HEIGHT - this.height;
+                
+                // Xử lý bắn đạn
+                if (this.cooldown > 0) {
+                    this.cooldown--;
+                }
+                
+                if (keys[this.controls.fire] && this.cooldown === 0) {
+                    this.shoot();
+                    this.cooldown = this.cooldownMax;
+                }
+                
+                // Cập nhật đạn
+                this.bullets.forEach((bullet, index) => {
+                    bullet.update();
+                    
+                    // Kiểm tra va chạm với xe tăng khác
+                    if (bullet.x > tank2.x && bullet.x < tank2.x + tank2.width &&
+                        bullet.y > tank2.y && bullet.y < tank2.y + tank2.height && this !== tank2) {
+                        // Xe tăng 2 bị bắn trúng
+                        score1++;
+                        score1Element.textContent = score1;
+                        this.bullets.splice(index, 1);
+                        checkWinCondition();
+                    }
+                    
+                    if (bullet.x > tank1.x && bullet.x < tank1.x + tank1.width &&
+                        bullet.y > tank1.y && bullet.y < tank1.y + tank1.height && this !== tank1) {
+                        // Xe tăng 1 bị bắn trúng
+                        score2++;
+                        score2Element.textContent = score2;
+                        this.bullets.splice(index, 1);
+                        checkWinCondition();
+                    }
+                    
+                    // Xóa đạn nếu ra khỏi màn hình
+                    if (bullet.x < 0 || bullet.x > GAME_WIDTH || bullet.y < 0 || bullet.y > GAME_HEIGHT) {
+                        this.bullets.splice(index, 1);
+                    }
+                });
+            }
+            
+            shoot() {
+                let bulletX, bulletY, bulletSpeedX, bulletSpeedY;
+                
+                switch(this.direction) {
+                    case 0: // Lên
+                        bulletX = this.x + this.width/2 - 2.5;
+                        bulletY = this.y - 10;
+                        bulletSpeedX = 0;
+                        bulletSpeedY = -10;
+                        break;
+                    case 1: // Phải
+                        bulletX = this.x + this.width + 5;
+                        bulletY = this.y + this.height/2 - 2.5;
+                        bulletSpeedX = 10;
+                        bulletSpeedY = 0;
+                        break;
+                    case 2: // Xuống
+                        bulletX = this.x + this.width/2 - 2.5;
+                        bulletY = this.y + this.height + 5;
+                        bulletSpeedX = 0;
+                        bulletSpeedY = 10;
+                        break;
+                    case 3: // Trái
+                        bulletX = this.x - 10;
+                        bulletY = this.y + this.height/2 - 2.5;
+                        bulletSpeedX = -10;
+                        bulletSpeedY = 0;
+                        break;
+                }
+                
+                this.bullets.push(new Bullet(bulletX, bulletY, bulletSpeedX, bulletSpeedY));
+            }
+        }
+        
+        // Đối tượng đạn
+        class Bullet {
+            constructor(x, y, speedX, speedY) {
+                this.x = x;
+                this.y = y;
+                this.speedX = speedX;
+                this.speedY = speedY;
+                this.width = 5;
+                this.height = 5;
+            }
+            
+            draw() {
+                ctx.fillStyle = '#FFD700';
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+            }
+            
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+            }
+        }
+        
+        // Tạo xe tăng
+        const tank1 = new Tank(100, 100, 40, 40, '#FF5252', {
+            up: 'KeyW',
+            down: 'KeyS',
+            left: 'KeyA',
+            right: 'KeyD',
+            fire: 'Space'
+        });
+        
+        const tank2 = new Tank(600, 400, 40, 40, '#2196F3', {
+            up: 'ArrowUp',
+            down: 'ArrowDown',
+            left: 'ArrowLeft',
+            right: 'ArrowRight',
+            fire: 'Enter'
+        });
+        
+        // Xử lý sự kiện bàn phím
+        const keys = {};
+        
+        window.addEventListener('keydown', (e) => {
+            keys[e.code] = true;
+        });
+        
+        window.addEventListener('keyup', (e) => {
+            keys[e.code] = false;
+        });
+        
+        // Vẽ nền game
+        function drawBackground() {
+            // Nền chính
+            ctx.fillStyle = '#0f3460';
+            ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+            
+            // Vẽ lưới
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.lineWidth = 1;
+            
+            for (let x = 0; x < GAME_WIDTH; x += 50) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, GAME_HEIGHT);
+                ctx.stroke();
+            }
+            
+            for (let y = 0; y < GAME_HEIGHT; y += 50) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(GAME_WIDTH, y);
+                ctx.stroke();
+            }
+            
+            // Vẽ chướng ngại vật
+            ctx.fillStyle = '#37474F';
+            ctx.fillRect(300, 100, 100, 100);
+            ctx.fillRect(200, 300, 100, 100);
+            ctx.fillRect(400, 300, 100, 100);
+        }
+        
+        // Kiểm tra điều kiện thắng
+        function checkWinCondition() {
+            if (score1 >= 5) {
+                gameOver = true;
+                winner = 1;
+                statusMessage.textContent = 'Xe Tăng Đỏ chiến thắng!';
+            } else if (score2 >= 5) {
+                gameOver = true;
+                winner = 2;
+                statusMessage.textContent = 'Xe Tăng Xanh chiến thắng!';
+            }
+        }
+        
+        // Vòng lặp game
+        function gameLoop() {
+            if (!gameRunning) return;
+            
+            // Xóa màn hình
+            drawBackground();
+            
+            // Cập nhật và vẽ xe tăng
+            tank1.update(keys);
+            tank1.draw();
+            
+            tank2.update(keys);
+            tank2.draw();
+            
+            // Kiểm tra game over
+            if (gameOver) {
+                gameRunning = false;
+                startButton.textContent = 'CHƠI LẠI';
+                return;
+            }
+            
+            // Tiếp tục vòng lặp
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // Xử lý nút bắt đầu
+        startButton.addEventListener('click', () => {
+            if (!gameRunning || gameOver) {
+                // Reset game
+                gameRunning = true;
+                gameOver = false;
+                score1 = 0;
+                score2 = 0;
+                score1Element.textContent = '0';
+                score2Element.textContent = '0';
+                statusMessage.textContent = 'Trận chiến đang diễn ra!';
+                startButton.textContent = 'BẮT ĐẦU';
+                
+                // Reset vị trí xe tăng
+                tank1.x = 100;
+                tank1.y = 100;
+                tank2.x = 600;
+                tank2.y = 400;
+                tank1.bullets = [];
+                tank2.bullets = [];
+                
+                // Bắt đầu vòng lặp game
+                gameLoop();
+            }
+        });
+        
+        // Vẽ màn hình chờ
+        drawBackground();
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+        ctx.fillStyle = 'white';
+        ctx.font = '30px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('Nhấn BẮT ĐẦU để chơi', GAME_WIDTH/2, GAME_HEIGHT/2);
+    </script>
 </body>
 </html>
