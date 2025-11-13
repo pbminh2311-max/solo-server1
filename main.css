@@ -1,0 +1,19 @@
+.messi {
+    color:red;
+    font-size: 100px;
+}
+
+#ronaldo {
+    color:blue;
+}
+html{
+    color: rosybrown;
+}
+
+:root {
+    --mau: yellow;
+}
+
+h6{
+    color: var(--mau);
+}

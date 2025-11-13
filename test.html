@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test</title>
+</head>
+<body>
+    <h1>Test Game Loading</h1>
+    <script>
+        console.log("Script loading...");
+        
+        // Test basic functionality
+        try {
+            const canvas = document.createElement('canvas');
+            canvas.width = 900;
+            canvas.height = 560;
+            document.body.appendChild(canvas);
+            
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = 'red';
+            ctx.fillRect(10, 10, 50, 50);
+            
+            console.log("Canvas test successful");
+        } catch (error) {
+            console.error("Canvas test failed:", error);
+        }
+        
+        // Test if we can load the main game
+        console.log("Loading main game...");
+    </script>
+    
+    <!-- Load the main game script -->
+    <script>
+        // Copy the JavaScript part from index.html here for testing
+        console.log("Game script loaded");
+    </script>
+</body>
+</html>
