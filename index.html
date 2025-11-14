@@ -45,7 +45,27 @@ body::before{
 
 header.card{display:flex;justify-content:space-between;align-items:center;padding:14px 16px}
 
-canvas{background:#0b2a3a;border-radius:14px;display:block;margin:0 auto;box-shadow:0 10px 30px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.08)}
+.game-container{
+	position:relative;
+	width:900px;
+	height:560px;
+	margin:0 auto;
+	border-radius:14px;
+	background:#0b2a3a;
+	box-shadow:0 10px 30px rgba(0,0,0,0.6);
+	border:1px solid rgba(255,255,255,0.08);
+	overflow:hidden;
+}
+.game-container canvas{
+	display:block;
+	width:100%;
+	height:100%;
+	margin:0;
+	background:transparent;
+	border:none;
+	box-shadow:none;
+	border-radius:0;
+}
 .hud{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 .info{font-size:14px}
 .controls{font-size:13px;color:#bfe}
@@ -138,6 +158,13 @@ canvas{background:#0b2a3a;border-radius:14px;display:block;margin:0 auto;box-sha
 .hp.p2 .hp-fill{
 	background:linear-gradient(90deg,#ff5fa9,#ff7f5f);
 	box-shadow:0 0 12px rgba(255,95,169,0.45);
+}
+.hp-text{
+	position:absolute;top:0;left:0;right:0;bottom:0;
+	display:flex;align-items:center;justify-content:center;
+	font-size:10px;font-weight:bold;color:#fff;
+	text-shadow:1px 1px 2px rgba(0,0,0,0.8);
+	pointer-events:none;z-index:2;
 }
 .hp-effects{
 	display:flex;
@@ -563,6 +590,120 @@ kbd{
 	max-width:600px;
 	padding:15px;
 }
+/* Main Menu Overlay */
+.main-menu-overlay{
+	position:absolute;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	background:
+		linear-gradient(180deg, rgba(12,16,28,0.62) 0%, rgba(8,12,24,0.86) 55%, rgba(6,9,18,0.92) 100%),
+		url('ebdbad8f-0f88-4626-8f93-4fe038906a64.jpg');
+	background-size:cover;
+	background-position:center;
+	background-repeat:no-repeat;
+	overflow:hidden;
+	display:flex;
+	align-items:center;
+	justify-content:center;
+	z-index:5;
+	animation:fadeIn 0.5s ease;
+}
+.main-menu-overlay::before{
+	content:"";
+	position:absolute;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	background:
+		repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0 1px, transparent 1px 40px),
+		repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0 1px, transparent 1px 40px);
+	pointer-events:none;
+	mix-blend-mode:soft-light;
+	z-index:1;
+}
+.main-menu-container{
+	position:relative;
+	z-index:2;
+	max-width:560px;
+	width:100%;
+	margin:0 auto;
+	padding:36px 48px;
+	text-align:center;
+}
+.main-menu-title{
+	font-size:64px;
+	font-weight:800;
+	letter-spacing:4px;
+	text-transform:uppercase;
+	background:linear-gradient(120deg, #ffe27a, #ff9865, #f66d92);
+	-webkit-background-clip:text;
+	-webkit-text-fill-color:transparent;
+	background-clip:text;
+	margin-bottom:24px;
+	text-shadow:0 12px 48px rgba(255,185,120,0.45);
+	animation:titlePulse 4s ease-in-out infinite;
+}
+@keyframes titlePulse{
+	0%, 100%{transform:scale(1);}
+	50%{transform:scale(1.05);}
+}
+.main-menu-subtitle{
+	font-size:18px;
+	color:#c6d4f1;
+	margin-bottom:48px;
+	letter-spacing:2.4px;
+	text-transform:uppercase;
+	text-shadow:0 4px 16px rgba(10,16,32,0.55);
+}
+.main-menu-buttons{
+	display:flex;
+	flex-direction:column;
+	align-items:center;
+	gap:28px;
+	margin-bottom:56px;
+}
+.menu-btn{
+	position:relative;
+	padding:0;
+	width:auto;
+	font-size:24px;
+	font-weight:600;
+	letter-spacing:2.4px;
+	line-height:1;
+	text-transform:uppercase;
+	border:none;
+	background:none;
+	color:#f5f7ff;
+	cursor:pointer;
+	transition:color 0.25s ease, text-shadow 0.25s ease, transform 0.2s ease;
+	text-shadow:0 4px 14px rgba(8,14,32,0.55);
+	position:relative;
+}
+.menu-version{
+	position:static;
+	margin:12px auto 0;
+	color:#7d89a8;
+	font-size:14px;
+	letter-spacing:0.8px;
+}
+.menu-btn:hover{
+	transform:translateY(-6px);
+	color:#ffffff;
+	text-shadow:0 8px 22px rgba(12,20,45,0.65);
+}
+.menu-btn:hover::before{
+	opacity:1;
+}
+.menu-btn:active{
+	transform:translateY(-2px);
+	text-shadow:0 5px 16px rgba(12,20,45,0.6);
+}
+.menu-btn-primary{color:#f8f9ff;}
+.menu-btn-boss{color:#ffd7ef;}
+.menu-btn-settings{color:#ffe6b2;}
 </style>
 </head>
 <body>
@@ -580,7 +721,10 @@ kbd{
     <div class="top-hud-inner">
         <div class="hp p1">
             <div class="hp-label">P1</div>
-            <div class="hp-bar"><div class="hp-fill" id="p1HpFill" style="width:100%"></div></div>
+            <div class="hp-bar">
+                <div class="hp-fill" id="p1HpFill" style="width:100%"></div>
+                <div class="hp-text" id="p1HpText">HP: 3/3</div>
+            </div>
             <div class="hp-effects empty" id="p1Effects"></div>
         </div>
         <div class="scoreboard" id="scoreBoard" data-lead="tie">
@@ -596,7 +740,10 @@ kbd{
         </div>
         <div class="hp p2">
             <div class="hp-label">P2</div>
-            <div class="hp-bar"><div class="hp-fill" id="p2HpFill" style="width:100%"></div></div>
+            <div class="hp-bar">
+                <div class="hp-fill" id="p2HpFill" style="width:100%"></div>
+                <div class="hp-text" id="p2HpText">HP: 3/3</div>
+            </div>
             <div class="hp-effects empty" id="p2Effects"></div>
         </div>
     </div>
@@ -662,37 +809,41 @@ kbd{
             <div class="settings-title">Thông số</div>
             <div class="settings-row">
                 <span>Max HP</span>
-                <input id="settingsMaxHp" class="settings-input" type="number" step="any" value="3">
+                <input id="settingsMaxHp" class="settings-input" type="number" step="0.1" min="0.1" value="3">
             </div>
             <div class="settings-row">
                 <span>Tốc độ</span>
-                <input id="settingsSpeed" class="settings-input" type="number" step="any" value="0.5">
+                <input id="settingsSpeed" class="settings-input" type="number" step="0.01" min="0.01" value="0.5">
             </div>
             <div class="settings-row">
                 <span>Số đạn tối đa</span>
-                <input id="settingsAmmo" class="settings-input" type="number" step="any" value="3">
+                <input id="settingsAmmo" class="settings-input" type="number" step="1" min="1" value="3">
+
             </div>
             <div class="settings-row">
                 <span>Thời gian nạp đạn (ms)</span>
-                <input id="settingsReload" class="settings-input" type="number" step="any" value="320">
+                <input id="settingsReload" class="settings-input" type="number" step="10" min="0" value="320">
+
             </div>
             <div class="settings-row">
                 <span>Tốc độ quay</span>
-                <input id="settingsTurnSpeed" class="settings-input" type="number" step="any" value="0.04">
+                <input id="settingsTurnSpeed" class="settings-input" type="number" step="0.01" min="0.01" value="0.06">
+
             </div>
             <div class="settings-row">
                 <span>Ma sát</span>
-                <input id="settingsFriction" class="settings-input" type="number" step="any" value="0.93">
+                <input id="settingsFriction" class="settings-input" type="number" step="0.01" min="0.01" max="1" value="0.93">
+
             </div>
             <div class="settings-row">
                 <span>Tốc độ hồi đạn</span>
-                <input id="settingsReloadRate" class="settings-input" type="number" step="any" value="0.0167">
+                <input id="settingsReloadRate" class="settings-input" type="number" step="0.001" min="0.001" value="0.0167">
+
             </div>
         </div>
         <div class="settings-group">
             <div class="settings-title">Hành động</div>
             <div class="settings-actions">
-                <button id="spawnBossBtn" class="btn-boss-action">Spawn Boss</button>
                 <button id="settingsFullscreenBtn">Toàn màn hình</button>
             </div>
         </div>
@@ -707,8 +858,26 @@ kbd{
     </div>
 </section>
 <!-- Game canvas container -->
-<div class="game-container" style="position:relative; display:inline-block;">
+<div class="game-container">
     <canvas id="c" width="900" height="560"></canvas>
+    
+    <!-- Main Menu Overlay -->
+    <div id="mainMenuOverlay" class="main-menu-overlay">
+        <div class="main-menu-container">
+            <h1 class="main-menu-title">Ngạo nghễ Kaguyacon</h1>
+            <p class="main-menu-subtitle">Đế vương phải có long ngai</p>
+            
+            <div class="main-menu-buttons">
+                <button class="menu-btn menu-btn-primary" id="menuBtnPvP">Player vs Player</button>
+                
+                <button class="menu-btn menu-btn-boss" id="menuBtnBoss">VS Boss Mode</button>
+                
+                <button class="menu-btn menu-btn-settings" id="menuBtnSettings">Settings</button>
+            </div>
+            
+            <div class="menu-version">Version 2.0.0</div>
+        </div>
+    </div>
     
     <!-- Game UI will be drawn on canvas -->
 </div>
@@ -832,6 +1001,10 @@ kbd{
             <div class="key"><kbd>G</kbd></div>
             <div class="desc">Toggle Bất tử — Bật/tắt miễn sát thương cho hai người chơi.</div>
         </div>
+        <div class="row">
+            <div class="key"><kbd>M</kbd></div>
+            <div class="desc">Toggle 1 Hit Kill — Đạn gây 999999 damage (tức chết luôn).</div>
+        </div>
     </div>
 </section>
 </div>
@@ -870,8 +1043,6 @@ kbd{
         </div>
     </div>
 </section>
-
-
 <!-- Game UI Info -->
 <div id="gameInfo" style="position: absolute; top: 10px; left: 10px; color: #fff; font-size: 14px; pointer-events: none; background: rgba(0,0,0,0.5); padding: 8px 12px; border-radius: 8px;">
     <div id="gameModeInfo">Mode: Player vs Player</div>
@@ -902,10 +1073,11 @@ const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 const normalizeAngle=angle=>Math.atan2(Math.sin(angle),Math.cos(angle));
 const CHARGE_HOLD_TIME = 2000;
 const CHARGE_AMMO_COST = 3;
-const HOMING_MAX_TURN = 0.12; // radians per frame, smooth steering
+const HOMING_MAX_TURN = 0.08; // radians per frame, smooth steering
 let devMode = false;
 let devNoWalls = false;
 let devGodMode = false;
+let devOneHitKill = false;
 
 const BUFF_COLORS = {
     heal:'#4f4',
@@ -938,7 +1110,7 @@ class Tank{
     constructor(x,y,color,controls){
         this.x=x; this.y=y; this.r=16; this.angle=0; this.speed=0;
         this.color=color; this.controls={...(controls||{})};
-        this.turnSpeed=0.04; this.moveSpeed=0.5; this.friction=0.93;
+        this.turnSpeed=0.06; this.moveSpeed=0.5; this.friction=0.93;
         this.hp=3; this.maxHp=3; this.lastShot=0; this.reload=320;
         this.maxAmmo=3; this.ammo=this.maxAmmo; this.reloadRate=1/60; this.reloadCooldown=0;
         this.invisible=false; this.shield=false;
@@ -966,11 +1138,16 @@ class Tank{
         this.shootHoldTime = 0;
         this.chargeState = 'idle';
         this.wasShootDown = false;
-
+        this.stunned = false;
     }
     // Đây là đoạn code mới
 update(dt,input){
     // nếu tank đang bị root thì không được di chuyển (vẫn có thể quay)
+    if(this.stunned){
+        this.speed = 0;
+        return; // Không xử lý input nếu bị choáng
+    }
+    
     const isRooted = !!this.rooted;
 
     if(this.statusTimer > 0){
@@ -1104,8 +1281,17 @@ update(dt,input){
 
 
     draw(ctx){
-        const radius = this.displayRadius;
-        if(this.invisible || this.hp<=0){
+        if(this.invisible && !this.isClone) {
+        return;
+    }
+        // Special drawing for mini slimes
+        if (this.isMiniSlime) {
+            this.drawMiniSlime(ctx);
+            return;
+        }
+        
+        const radius = this.displayRadius || this.r;
+        if(!isFinite(radius) || radius <= 0){
             return;
         }
         // Ensure safe scale calculation
@@ -1235,7 +1421,7 @@ ctx.restore();
             ctx.save();
             ctx.translate(this.x, this.y);
             ctx.rotate(this.speedRingPhase);
-            ctx.globalAlpha = 0.7;
+            ctx.globalAlpha = 0.6;
             ctx.strokeStyle = color;
             ctx.lineWidth = 3;
             ctx.setLineDash([9, 9]);
@@ -1350,7 +1536,7 @@ ctx.restore();
             drawChainAround(ctx, this.x, this.y, radius + 5, color, 12);
         }
 
-        const drawHUD = this.renderAlpha > 0.05 && !this.pendingRemoval && !this.invisible && !this.isClone;
+        const drawHUD = this.hp > 0 && !this.pendingRemoval && !this.invisible && !this.isClone;
         if (drawHUD) {
         const hpWidth = 48, hpHeight = 6;
         const hpX = this.x - hpWidth / 2;
@@ -1443,51 +1629,80 @@ ctx.restore();
         }
         this.activeEffects = {};
         this.speed = 0;
-        this.moveSpeed = this.baseMoveSpeed;
-        this.friction = this.baseFriction;
-        this.reloadRate = this.baseReloadRate;
-        this.reload = this.baseReload;
-        this.turnSpeed = this.baseTurnSpeed;
-        this.r = this.baseRadius;
+        
+        // Don't reset boss mode permanent buffs
+        if (gameMode !== 'vsboss') {
+            this.moveSpeed = this.baseMoveSpeed;
+            this.friction = this.baseFriction;
+            this.reloadRate = this.baseReloadRate;
+            this.reload = this.baseReload;
+            this.turnSpeed = this.baseTurnSpeed;
+            this.r = this.baseRadius;
+            this.damage = 1;
+            this.maxHp = 3;
+            this.bulletSpeedMultiplier = 1;
+        }
+        
         this.homing = false;
         this.invisible = false;
         this.shield = false;
-        this.bigBullet = false;
-        this.ricochet = false;
         this.shotgun = false;
-        this.explosive = false;
-        this.rooted = false;
-        this.hp = this.maxHp;
-        this.ammo = this.maxAmmo;
-        this.reloadCooldown = 0;
-        this.lastShot = 0;
-        if(this.baseControls){
-            this.controls = {...this.baseControls};
-        }
-        this.statusText = null;
-        this.statusTimer = 0;
-        this.statusColor = '#eaf2ff';
+        this.bounce = false;
         this.displayRadius = this.r;
-        this.renderAlpha = 1;
-        this.healPulseTimer = 0;
-        this.pendingRemoval = false;
-        this.fadeOutTimer = 0;
-        this.speedRingPhase = 0;
-        this.pierce = false;
-        this.poisonBullet = false;
-        this.silenced = false;
-        this.possession = false;
-        this.possessionFired = false;
-        this.trailBullet = false;
-        this.fireRate = false;
-        this.fury = false;
-        this.shootHoldTime = 0;
-        this.chargeState = 'idle';
-        this.wasShootDown = false;
-
     }
-
+    
+    drawMiniSlime(ctx) {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        
+        const time = performance.now() * 0.004;
+        
+        // Mini slime glow
+        ctx.shadowColor = '#4ade80';
+        ctx.shadowBlur = 8;
+        
+        // Animated mini slime shape
+        ctx.beginPath();
+        const points = 6;
+        for(let i = 0; i < points; i++) {
+            const angle = (i / points) * Math.PI * 2;
+            const wobble = Math.sin(time + i) * 2;
+            const radius = this.r + wobble;
+            const x = Math.cos(angle) * radius;
+            const y = Math.sin(angle) * radius;
+            
+            if(i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        
+        // Mini slime gradient
+        const gradient = ctx.createRadialGradient(0, -this.r/3, 0, 0, 0, this.r);
+        gradient.addColorStop(0, '#86efac');
+        gradient.addColorStop(0.7, '#4ade80');
+        gradient.addColorStop(1, '#22c55e');
+        ctx.fillStyle = gradient;
+        ctx.fill();
+        
+        // Mini slime highlight
+        const highlight = ctx.createRadialGradient(-this.r/3, -this.r/2, 0, -this.r/3, -this.r/2, this.r/3);
+        highlight.addColorStop(0, 'rgba(255,255,255,0.5)');
+        highlight.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = highlight;
+        ctx.fill();
+        
+        ctx.shadowBlur = 0;
+        
+        // Mini slime core
+        ctx.fillStyle = '#16a34a';
+        ctx.beginPath();
+        ctx.arc(0, 0, this.r * 0.2, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.restore();
+    }
 }
+
 class Boss extends Tank {
     constructor(x,y,type='normal'){
         super(x,y,'#800',{}); 
@@ -1509,63 +1724,1048 @@ class Boss extends Tank {
         this.skillCooldowns = {};
         this.hasSplit = false; // For slime boss
         this.debuffTimer = 0; // For wolf boss
+        this.damageReduction = 1; // For Golem defense
+        this.isDefending = false; // For Golem
+        this.isHealing = false; // For Treant visual
+        
+        // Animation properties
+        this.isJumping = false;
+        this.jumpStartTime = 0;
+        this.jumpStartPos = {x: 0, y: 0};
+        this.jumpTargetPos = {x: 0, y: 0};
+        this.jumpDuration = 800; // 0.8s jump animation
     }
     
     setupBossStats() {
+        const now = performance.now();
         switch(this.bossType) {
             case 'slime':
                 this.hp = 6;
                 this.maxHp = 6;
                 this.damage = 1;
                 this.color = '#4a9';
-                this.skillCooldowns = {jump: 0};
+                this.moveSpeed = 0.3; // Slower than player
+                this.skillCooldowns = {jump: now - 3000}; // Ready to jump immediately
                 break;
             case 'wolf':
                 this.hp = 12;
                 this.maxHp = 12;
-                this.damage = 1.5;
+                this.damage = 1;
                 this.color = '#333';
-                this.skillCooldowns = {dash: 0, howl: 0};
+                this.moveSpeed = 0.75; // 150% of player speed (0.5 * 1.5)
+                this.skillCooldowns = {dash: now - 4000, howl: now - 6000}; // Ready immediately
                 break;
-            default: // normal boss
+            case 'golem':
+                this.hp = 18;
+                this.maxHp = 18;
+                this.damage = 2;
+                this.color = '#78716c';
+                this.moveSpeed = 0.4; // 80% player speed
+                this.reload = 3500;
+                this.skillCooldowns = {
+                    groundSlam: now - 5000,
+                    defense: now - 10000
+                };
+                break;
+            case 'witch':
+                this.hp = 16;
+                this.maxHp = 16;
+                this.damage = 1;
+                this.color = '#7c3aed';
+                this.moveSpeed = 0.55; // 110% player speed
+                this.reload = 2800;
+                this.skillCooldowns = {
+                    darkOrbs: now - 4000,
+                    teleport: now - 6000
+                };
+                break;
+            case 'treant':
                 this.hp = 20;
                 this.maxHp = 20;
+                this.damage = 2;
+                this.color = '#16a34a';
+                this.moveSpeed = 0.45; // 90% player speed
+                this.reload = 3200;
+                this.skillCooldowns = {
+                    thorns: now - 5000,
+                    heal: now - 8000,
+                    roots: now - 12000
+                };
+                break;
+            default: // fallback for higher floors
+                this.hp = 20 + (Math.floor(Math.random() * 10));
+                this.maxHp = this.hp;
                 this.damage = 1;
                 this.color = '#800';
+                this.moveSpeed = 0.4;
                 this.skillCooldowns = {};
                 break;
         }
     }
     
     draw(ctx){
-        // VẼ boss với kích thước x2 (cả nòng súng)
+        // Modern Boss Design
         ctx.save(); 
-        ctx.translate(this.x,this.y); 
+        ctx.translate(this.x, this.y); 
         ctx.rotate(this.angle);
-        ctx.fillStyle=this.color; 
-        ctx.strokeStyle='#000'; 
-        ctx.lineWidth=4; // lineWidth x2
-        roundRect(ctx,-this.r,-this.r,this.r*2,this.r*2,12,true,true); // border radius x2
         
-        // Vẽ nòng súng to x2
-        ctx.fillStyle='#222'; 
-        ctx.fillRect(-10,-10,40,20); // nòng súng to x2
-        ctx.fillStyle='#111'; 
-        ctx.fillRect(40,-6,36,12); // đầu nòng súng to x2
+        // Boss type specific design
+        this.drawBossBody(ctx);
+        this.drawBossWeapon(ctx);
         
         ctx.restore();
 
-        // Thanh HP cố định trên màn hình
-        const barW = 400, barH = 12;
-        const x = (W - barW)/2, y = 20;
-        ctx.fillStyle = '#333';
-        ctx.fillRect(x, y, barW, barH);
-        const hpPerc = this.hp / this.maxHp;
-        ctx.fillStyle = '#f00';
-        ctx.fillRect(x, y, barW * hpPerc, barH);
-        ctx.strokeStyle = '#000';
-        ctx.strokeRect(x, y, barW, barH);
+        // Ultra Modern Boss Health Bar
+        this.drawModernHealthBar(ctx);
     }
+    
+    drawBossBody(ctx) {
+        switch(this.bossType) {
+            case 'slime':
+                this.drawSlimeBody(ctx);
+                break;
+            case 'wolf':
+                this.drawWolfBody(ctx);
+                break;
+            case 'golem':
+                this.drawGolemBody(ctx);
+                break;
+            case 'witch':
+                this.drawWitchBody(ctx);
+                break;
+            case 'treant':
+                this.drawTreantBody(ctx);
+                break;
+            default:
+                this.drawNormalBossBody(ctx);
+                break;
+        }
+    }
+    
+    drawSlimeBody(ctx) {
+        // Slime blob shape - không phải xe tăng
+        const time = performance.now() * 0.003;
+        
+        // Slime glow effect
+        for(let i = 3; i >= 0; i--) {
+            ctx.shadowColor = '#4ade80';
+            ctx.shadowBlur = 25 - i * 6;
+            
+            // Organic slime shape với nhiều blob
+            ctx.beginPath();
+            const points = 12;
+            for(let j = 0; j < points; j++) {
+                const angle = (j / points) * Math.PI * 2;
+                const wobble = Math.sin(time * 3 + j * 0.8) * 4;
+                const radius = this.r + wobble + i * 3;
+                const x = Math.cos(angle) * radius;
+                const y = Math.sin(angle) * radius;
+                
+                if(j === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.closePath();
+            
+            const gradient = ctx.createRadialGradient(-this.r/3, -this.r/3, 0, 0, 0, this.r + i * 3);
+            gradient.addColorStop(0, '#86efac');
+            gradient.addColorStop(0.4, '#4ade80');
+            gradient.addColorStop(0.8, '#22c55e');
+            gradient.addColorStop(1, 'rgba(34, 197, 94, 0.2)');
+            
+            ctx.fillStyle = gradient;
+            ctx.fill();
+        }
+        
+        // Slime bubbles inside
+        ctx.shadowBlur = 0;
+        for(let i = 0; i < 5; i++) {
+            const bubbleTime = time + i * 0.5;
+            const x = Math.cos(bubbleTime) * (this.r * 0.3) + Math.sin(bubbleTime * 1.3) * (this.r * 0.2);
+            const y = Math.sin(bubbleTime * 0.8) * (this.r * 0.3) + Math.cos(bubbleTime * 1.1) * (this.r * 0.2);
+            const size = 3 + Math.sin(bubbleTime * 2) * 2;
+            
+            ctx.fillStyle = '#bbf7d0';
+            ctx.beginPath();
+            ctx.arc(x, y, size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        // Slime core
+        ctx.fillStyle = '#22c55e';
+        ctx.beginPath();
+        ctx.arc(0, 0, this.r * 0.3, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    
+    drawWolfBody(ctx) {
+        // Wolf shape - không phải xe tăng
+        const time = performance.now() * 0.005;
+        
+        // Dark aura
+        for(let i = 0; i < 3; i++) {
+            ctx.shadowColor = '#6366f1';
+            ctx.shadowBlur = 25;
+            
+            const gradient = ctx.createRadialGradient(0, 0, this.r * 0.5, 0, 0, this.r + i * 8);
+            gradient.addColorStop(0, '#4338ca');
+            gradient.addColorStop(0.7, '#3730a3');
+            gradient.addColorStop(1, 'rgba(30, 27, 75, 0.3)');
+            
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(0, 0, this.r + i * 5, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        // Wolf body - oval shape
+        ctx.shadowBlur = 0;
+        const bodyGradient = ctx.createRadialGradient(-this.r/4, -this.r/4, 0, 0, 0, this.r);
+        bodyGradient.addColorStop(0, '#8b5cf6');
+        bodyGradient.addColorStop(0.5, '#6366f1');
+        bodyGradient.addColorStop(1, '#1e1b4b');
+        
+        ctx.fillStyle = bodyGradient;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, this.r * 1.2, this.r * 0.8, 0, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Wolf head (smaller circle at front)
+        ctx.fillStyle = '#4338ca';
+        ctx.beginPath();
+        ctx.ellipse(this.r * 0.6, 0, this.r * 0.6, this.r * 0.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Wolf ears
+        ctx.fillStyle = '#3730a3';
+        ctx.beginPath();
+        ctx.ellipse(this.r * 0.8, -this.r * 0.4, this.r * 0.2, this.r * 0.3, -0.3, 0, Math.PI * 2);
+        ctx.ellipse(this.r * 0.8, this.r * 0.4, this.r * 0.2, this.r * 0.3, 0.3, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Wolf eyes (glowing)
+        ctx.shadowColor = '#a855f7';
+        ctx.shadowBlur = 8;
+        ctx.fillStyle = '#c4b5fd';
+        ctx.beginPath();
+        ctx.arc(this.r * 0.7, -this.r * 0.15, 4, 0, Math.PI * 2);
+        ctx.arc(this.r * 0.7, this.r * 0.15, 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        
+        // Wolf tail (animated)
+        const tailWag = Math.sin(time * 8) * 0.3;
+        ctx.strokeStyle = '#6366f1';
+        ctx.lineWidth = 6;
+        ctx.beginPath();
+        ctx.moveTo(-this.r * 0.8, 0);
+        ctx.quadraticCurveTo(-this.r * 1.2, tailWag * this.r, -this.r * 1.4, tailWag * this.r * 0.5);
+        ctx.stroke();
+    }
+    
+    drawGolemBody(ctx) {
+        // Stone/Rock texture with defense glow
+        const time = performance.now() * 0.002;
+        
+        // Defense aura when defending
+        if(this.isDefending) {
+            for(let i = 0; i < 3; i++) {
+                ctx.shadowColor = '#fbbf24';
+                ctx.shadowBlur = 20;
+                
+                const gradient = ctx.createRadialGradient(0, 0, this.r * 0.5, 0, 0, this.r + i * 6);
+                gradient.addColorStop(0, '#f59e0b');
+                gradient.addColorStop(0.7, '#d97706');
+                gradient.addColorStop(1, 'rgba(251, 191, 36, 0.2)');
+                
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(0, 0, this.r + i * 4, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        
+        // Main golem body - stone blocks
+        ctx.shadowBlur = 0;
+        const bodyGradient = ctx.createRadialGradient(-this.r/3, -this.r/3, 0, 0, 0, this.r);
+        bodyGradient.addColorStop(0, '#a8a29e');
+        bodyGradient.addColorStop(0.5, '#78716c');
+        bodyGradient.addColorStop(1, '#44403c');
+        
+        // Golem torso (large rectangle)
+        ctx.fillStyle = bodyGradient;
+        roundRect(ctx, -this.r * 0.8, -this.r * 0.9, this.r * 1.6, this.r * 1.8, 6, true, false);
+        
+        // Golem head (smaller rectangle on top)
+        ctx.fillStyle = '#57534e';
+        roundRect(ctx, -this.r * 0.5, -this.r * 1.3, this.r, this.r * 0.6, 4, true, false);
+        
+        // Golem arms (rectangles on sides)
+        ctx.fillStyle = '#6b7280';
+        roundRect(ctx, -this.r * 1.2, -this.r * 0.4, this.r * 0.3, this.r * 0.8, 3, true, false);
+        roundRect(ctx, this.r * 0.9, -this.r * 0.4, this.r * 0.3, this.r * 0.8, 3, true, false);
+        
+        // Golem legs (rectangles at bottom)
+        roundRect(ctx, -this.r * 0.4, this.r * 0.6, this.r * 0.3, this.r * 0.6, 3, true, false);
+        roundRect(ctx, this.r * 0.1, this.r * 0.6, this.r * 0.3, this.r * 0.6, 3, true, false);
+        
+        // Stone cracks/details
+        ctx.strokeStyle = '#292524';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        // Cracks on torso
+        ctx.moveTo(-this.r/2, -this.r/2);
+        ctx.lineTo(-this.r/4, this.r/4);
+        ctx.moveTo(this.r/3, -this.r/3);
+        ctx.lineTo(this.r/2, this.r/2);
+        // Cracks on head
+        ctx.moveTo(-this.r/4, -this.r);
+        ctx.lineTo(this.r/4, -this.r * 0.8);
+        ctx.stroke();
+        
+        // Golem eyes (glowing when defending)
+        ctx.fillStyle = this.isDefending ? '#fbbf24' : '#ef4444';
+        ctx.shadowColor = this.isDefending ? '#fbbf24' : '#ef4444';
+        ctx.shadowBlur = this.isDefending ? 8 : 4;
+        ctx.beginPath();
+        ctx.arc(-this.r * 0.2, -this.r, 3, 0, Math.PI * 2);
+        ctx.arc(this.r * 0.2, -this.r, 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        
+        // Stone border
+        ctx.strokeStyle = this.isDefending ? '#fbbf24' : '#57534e';
+        ctx.lineWidth = this.isDefending ? 4 : 3;
+        if(this.isDefending) {
+            ctx.shadowColor = '#fbbf24';
+            ctx.shadowBlur = 8;
+        }
+        roundRect(ctx, -this.r, -this.r, this.r*2, this.r*2, 4, false, true);
+        ctx.shadowBlur = 0;
+    }
+    
+    drawWitchBody(ctx) {
+        // Dark magic with purple energy
+        const time = performance.now() * 0.006;
+        
+        // Magic aura
+        for(let i = 0; i < 4; i++) {
+            ctx.shadowColor = '#a855f7';
+            ctx.shadowBlur = 15;
+            
+            const gradient = ctx.createRadialGradient(0, 0, this.r * 0.3, 0, 0, this.r + i * 5);
+            gradient.addColorStop(0, '#c084fc');
+            gradient.addColorStop(0.6, '#7c3aed');
+            gradient.addColorStop(1, 'rgba(124, 58, 237, 0.1)');
+            
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(Math.cos(time + i) * 3, Math.sin(time + i) * 3, this.r + i * 3, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        // Main witch body
+        ctx.shadowBlur = 0;
+        const bodyGradient = ctx.createRadialGradient(-this.r/4, -this.r/4, 0, 0, 0, this.r);
+        bodyGradient.addColorStop(0, '#a855f7');
+        bodyGradient.addColorStop(0.5, '#7c3aed');
+        bodyGradient.addColorStop(1, '#4c1d95');
+        
+        ctx.fillStyle = bodyGradient;
+        roundRect(ctx, -this.r, -this.r, this.r*2, this.r*2, 12, true, false);
+        
+        // Magic symbols
+        ctx.fillStyle = '#ddd6fe';
+        ctx.font = '16px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('✦', 0, 0);
+        
+        // Energy border with pulse
+        ctx.strokeStyle = '#c084fc';
+        ctx.lineWidth = 3;
+        ctx.shadowColor = '#a855f7';
+        ctx.shadowBlur = 12;
+        roundRect(ctx, -this.r, -this.r, this.r*2, this.r*2, 12, false, true);
+        ctx.shadowBlur = 0;
+    }
+    
+    drawTreantBody(ctx) {
+        // Nature/Wood texture with healing glow
+        const time = performance.now() * 0.003;
+        
+        // Healing aura when healing
+        if(this.isHealing) {
+            for(let i = 0; i < 3; i++) {
+                ctx.shadowColor = '#22c55e';
+                ctx.shadowBlur = 18;
+                
+                const gradient = ctx.createRadialGradient(0, 0, this.r * 0.4, 0, 0, this.r + i * 7);
+                gradient.addColorStop(0, '#4ade80');
+                gradient.addColorStop(0.7, '#22c55e');
+                gradient.addColorStop(1, 'rgba(34, 197, 94, 0.2)');
+                
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(0, 0, this.r + i * 5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        
+        // Main treant body - tree trunk
+        ctx.shadowBlur = 0;
+        const bodyGradient = ctx.createRadialGradient(-this.r/3, -this.r/3, 0, 0, 0, this.r);
+        bodyGradient.addColorStop(0, '#4ade80');
+        bodyGradient.addColorStop(0.5, '#16a34a');
+        bodyGradient.addColorStop(1, '#14532d');
+        
+        // Tree trunk (main body)
+        ctx.fillStyle = bodyGradient;
+        ctx.beginPath();
+        ctx.ellipse(0, this.r * 0.2, this.r * 0.8, this.r * 1.2, 0, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Tree crown/canopy
+        ctx.fillStyle = '#22c55e';
+        ctx.beginPath();
+        ctx.arc(0, -this.r * 0.3, this.r * 0.9, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Tree branches
+        const branchTime = performance.now() * 0.002;
+        ctx.strokeStyle = '#15803d';
+        ctx.lineWidth = 4;
+        for(let i = 0; i < 6; i++) {
+            const angle = (i / 6) * Math.PI * 2;
+            const sway = Math.sin(branchTime + i) * 0.1;
+            const startX = Math.cos(angle) * this.r * 0.6;
+            const startY = Math.sin(angle) * this.r * 0.6 - this.r * 0.3;
+            const endX = Math.cos(angle + sway) * this.r * 1.1;
+            const endY = Math.sin(angle + sway) * this.r * 1.1 - this.r * 0.3;
+            
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(endX, endY);
+            ctx.stroke();
+        }
+        
+        // Bark texture on trunk
+        ctx.strokeStyle = '#052e16';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        for(let i = 0; i < 5; i++) {
+            const y = -this.r * 0.5 + (i * this.r * 0.3);
+            ctx.moveTo(-this.r * 0.4, y);
+            ctx.lineTo(this.r * 0.4, y + 3);
+        }
+        ctx.stroke();
+        
+        // Tree face (eyes)
+        ctx.fillStyle = this.isHealing ? '#4ade80' : '#052e16';
+        ctx.shadowColor = this.isHealing ? '#22c55e' : 'transparent';
+        ctx.shadowBlur = this.isHealing ? 6 : 0;
+        ctx.beginPath();
+        ctx.arc(-this.r * 0.2, this.r * 0.1, 3, 0, Math.PI * 2);
+        ctx.arc(this.r * 0.2, this.r * 0.1, 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        
+        // Nature border
+        ctx.strokeStyle = this.isHealing ? '#22c55e' : '#15803d';
+        ctx.lineWidth = this.isHealing ? 4 : 3;
+        if(this.isHealing) {
+            ctx.shadowColor = '#22c55e';
+            ctx.shadowBlur = 10;
+        }
+        roundRect(ctx, -this.r, -this.r, this.r*2, this.r*2, 6, false, true);
+        ctx.shadowBlur = 0;
+    }
+    
+    drawNormalBossBody(ctx) {
+        // Mechanical/Tech boss
+        // Outer glow
+        ctx.shadowColor = '#ef4444';
+        ctx.shadowBlur = 20;
+        
+        // Main body with tech pattern
+        const gradient = ctx.createLinearGradient(-this.r, -this.r, this.r, this.r);
+        gradient.addColorStop(0, '#dc2626');
+        gradient.addColorStop(0.3, '#b91c1c');
+        gradient.addColorStop(0.7, '#991b1b');
+        gradient.addColorStop(1, '#7f1d1d');
+        
+        ctx.fillStyle = gradient;
+        roundRect(ctx, -this.r, -this.r, this.r*2, this.r*2, 12, true, false);
+        
+        // Tech lines
+        ctx.strokeStyle = '#fca5a5';
+        ctx.lineWidth = 2;
+        ctx.shadowBlur = 5;
+        
+        // Horizontal lines
+        for(let i = -1; i <= 1; i++) {
+            ctx.beginPath();
+            ctx.moveTo(-this.r + 10, i * this.r/3);
+            ctx.lineTo(this.r - 10, i * this.r/3);
+            ctx.stroke();
+        }
+        
+        // Vertical lines
+        for(let i = -1; i <= 1; i++) {
+            ctx.beginPath();
+            ctx.moveTo(i * this.r/3, -this.r + 10);
+            ctx.lineTo(i * this.r/3, this.r - 10);
+            ctx.stroke();
+        }
+        
+        // Central core
+        ctx.fillStyle = '#fca5a5';
+        ctx.shadowBlur = 15;
+        ctx.beginPath();
+        ctx.arc(0, 0, 8, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.shadowBlur = 0;
+        
+        // Border
+        ctx.strokeStyle = '#fbbf24';
+        ctx.lineWidth = 3;
+        roundRect(ctx, -this.r, -this.r, this.r*2, this.r*2, 12, false, true);
+    }
+    
+    drawBossWeapon(ctx) {
+    switch(this.bossType) {
+        case 'slime':
+            // Slime không có weapon
+            break;
+        case 'wolf':
+            this.drawWolfClaws(ctx);
+            break;
+        case 'golem':
+            this.drawGolemFists(ctx);
+            break;
+        case 'witch':
+            this.drawWitchStaff(ctx);
+            break;
+        case 'treant':
+            this.drawTreantBranches(ctx);
+            break;
+        default:
+            this.drawTechCannon(ctx);
+            break;
+    }
+}
+    
+    drawWolfClaws(ctx) {
+        // Wolf claws
+        ctx.fillStyle = '#c4b5fd';
+        ctx.shadowColor = '#a855f7';
+        ctx.shadowBlur = 8;
+        
+        // Left claw
+        ctx.beginPath();
+        ctx.moveTo(this.r - 5, -8);
+        ctx.lineTo(this.r + 15, -12);
+        ctx.lineTo(this.r + 20, -4);
+        ctx.lineTo(this.r + 15, 4);
+        ctx.lineTo(this.r + 10, 8);
+        ctx.closePath();
+        ctx.fill();
+        
+        // Right claw
+        ctx.beginPath();
+        ctx.moveTo(this.r - 5, 8);
+        ctx.lineTo(this.r + 15, 12);
+        ctx.lineTo(this.r + 20, 4);
+        ctx.lineTo(this.r + 15, -4);
+        ctx.lineTo(this.r + 10, -8);
+        ctx.closePath();
+        ctx.fill();
+        
+        ctx.shadowBlur = 0;
+    }
+    
+    drawGolemFists(ctx) {
+        // Stone fists
+        ctx.fillStyle = '#57534e';
+        ctx.shadowColor = this.isDefending ? '#fbbf24' : '#44403c';
+        ctx.shadowBlur = this.isDefending ? 12 : 6;
+        
+        // Left fist
+        ctx.beginPath();
+        ctx.arc(this.r - 2, -10, 8, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Right fist
+        ctx.beginPath();
+        ctx.arc(this.r - 2, 10, 8, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Fist details
+        ctx.fillStyle = '#292524';
+        ctx.beginPath();
+        ctx.arc(this.r + 2, -10, 3, 0, Math.PI * 2);
+        ctx.arc(this.r + 2, 10, 3, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.shadowBlur = 0;
+    }
+    
+    drawWitchStaff(ctx) {
+        // Magic staff
+        ctx.strokeStyle = '#4c1d95';
+        ctx.lineWidth = 4;
+        ctx.shadowColor = '#a855f7';
+        ctx.shadowBlur = 10;
+        
+        // Staff shaft
+        ctx.beginPath();
+        ctx.moveTo(this.r - 5, 0);
+        ctx.lineTo(this.r + 25, 0);
+        ctx.stroke();
+        
+        // Staff orb
+        ctx.fillStyle = '#c084fc';
+        ctx.shadowColor = '#a855f7';
+        ctx.shadowBlur = 15;
+        ctx.beginPath();
+        ctx.arc(this.r + 25, 0, 6, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Magic sparkles
+        const time = performance.now() * 0.01;
+        ctx.fillStyle = '#ddd6fe';
+        for(let i = 0; i < 3; i++) {
+            const angle = time + (i * Math.PI * 2 / 3);
+            const x = this.r + 25 + Math.cos(angle) * 12;
+            const y = Math.sin(angle) * 12;
+            ctx.beginPath();
+            ctx.arc(x, y, 2, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        ctx.shadowBlur = 0;
+    }
+    
+    drawTreantBranches(ctx) {
+        // Tree branches/roots
+        ctx.strokeStyle = '#15803d';
+        ctx.lineWidth = 3;
+        ctx.shadowColor = this.isHealing ? '#22c55e' : '#166534';
+        ctx.shadowBlur = this.isHealing ? 10 : 5;
+        
+        // Main branch
+        ctx.beginPath();
+        ctx.moveTo(this.r - 5, 0);
+        ctx.lineTo(this.r + 20, -5);
+        ctx.lineTo(this.r + 25, 0);
+        ctx.lineTo(this.r + 20, 5);
+        ctx.stroke();
+        
+        // Branch leaves
+        ctx.fillStyle = this.isHealing ? '#4ade80' : '#22c55e';
+        for(let i = 0; i < 4; i++) {
+            const angle = (i * Math.PI / 2) + (performance.now() * 0.002);
+            const x = this.r + 22 + Math.cos(angle) * 8;
+            const y = Math.sin(angle) * 8;
+            ctx.beginPath();
+            ctx.arc(x, y, 3, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        ctx.shadowBlur = 0;
+    }
+    
+    drawTechCannon(ctx) {
+        // High-tech cannon
+        ctx.shadowColor = '#fbbf24';
+        ctx.shadowBlur = 10;
+        
+        // Main barrel
+        const barrelGradient = ctx.createLinearGradient(-10, -10, 40, 10);
+        barrelGradient.addColorStop(0, '#374151');
+        barrelGradient.addColorStop(0.5, '#1f2937');
+        barrelGradient.addColorStop(1, '#111827');
+        
+        ctx.fillStyle = barrelGradient;
+        roundRect(ctx, -10, -10, 50, 20, 4, true, false);
+        
+        // Barrel details
+        ctx.fillStyle = '#6b7280';
+        for(let i = 0; i < 3; i++) {
+            ctx.fillRect(-5 + i * 15, -8, 2, 16);
+        }
+        
+        // Muzzle
+        ctx.fillStyle = '#fbbf24';
+        ctx.shadowBlur = 15;
+        roundRect(ctx, 35, -6, 12, 12, 2, true, false);
+        
+        // Muzzle glow
+        ctx.fillStyle = '#fcd34d';
+        ctx.beginPath();
+        ctx.arc(41, 0, 4, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.shadowBlur = 0;
+        
+        // Border
+        ctx.strokeStyle = '#fbbf24';
+    
+    // Energy border
+    ctx.strokeStyle = '#a855f7';
+    ctx.lineWidth = 3;
+    ctx.shadowColor = '#a855f7';
+    ctx.shadowBlur = 10;
+    roundRect(ctx, -this.r, -this.r, this.r*2, this.r*2, 8, false, true);
+    ctx.shadowBlur = 0;
+}
+    
+drawNormalBossBody(ctx) {
+    // Mechanical/Tech boss
+    // Outer glow
+    ctx.shadowColor = '#ef4444';
+    ctx.shadowBlur = 20;
+    
+    // Main body with tech pattern
+    const gradient = ctx.createLinearGradient(-this.r, -this.r, this.r, this.r);
+    gradient.addColorStop(0, '#dc2626');
+    gradient.addColorStop(0.3, '#b91c1c');
+    gradient.addColorStop(0.7, '#991b1b');
+    gradient.addColorStop(1, '#7f1d1d');
+    
+    ctx.fillStyle = gradient;
+    roundRect(ctx, -this.r, -this.r, this.r*2, this.r*2, 12, true, false);
+    
+    // Tech lines
+    ctx.strokeStyle = '#fca5a5';
+    ctx.lineWidth = 2;
+    ctx.shadowBlur = 5;
+    
+    // Horizontal lines
+    for(let i = -1; i <= 1; i++) {
+        ctx.beginPath();
+        ctx.moveTo(-this.r + 10, i * this.r/3);
+        ctx.lineTo(this.r - 10, i * this.r/3);
+        ctx.stroke();
+    }
+    
+    // Vertical lines
+    for(let i = -1; i <= 1; i++) {
+        ctx.beginPath();
+        ctx.moveTo(i * this.r/3, -this.r + 10);
+        ctx.lineTo(i * this.r/3, this.r - 10);
+        ctx.stroke();
+    }
+    
+    // Central core
+    ctx.fillStyle = '#fca5a5';
+    ctx.shadowBlur = 15;
+    ctx.beginPath();
+    ctx.arc(0, 0, 8, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.shadowBlur = 0;
+    
+    // Border
+    ctx.strokeStyle = '#fbbf24';
+    ctx.lineWidth = 3;
+    roundRect(ctx, -this.r, -this.r, this.r*2, this.r*2, 12, false, true);
+}
+    
+drawBossWeapon(ctx) {
+    switch(this.bossType) {
+        case 'slime':
+            // Slime không có weapon truyền thống
+            break;
+        case 'wolf':
+            this.drawWolfClaws(ctx);
+            break;
+        default:
+            this.drawTechCannon(ctx);
+            break;
+    }
+}
+    
+drawWolfClaws(ctx) {
+    // Wolf claws
+    ctx.fillStyle = '#c4b5fd';
+    ctx.shadowColor = '#a855f7';
+    ctx.shadowBlur = 8;
+    
+    // Left claw
+    ctx.beginPath();
+    ctx.moveTo(this.r - 5, -8);
+    ctx.lineTo(this.r + 15, -12);
+    ctx.lineTo(this.r + 20, -4);
+    ctx.lineTo(this.r + 15, 4);
+    ctx.lineTo(this.r + 10, 8);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Right claw
+    ctx.beginPath();
+    ctx.moveTo(this.r - 5, 8);
+    ctx.lineTo(this.r + 15, 12);
+    ctx.lineTo(this.r + 20, 4);
+    ctx.lineTo(this.r + 15, -4);
+    ctx.lineTo(this.r + 10, -8);
+    ctx.closePath();
+    ctx.fill();
+    
+    ctx.shadowBlur = 0;
+}
+    
+drawTechCannon(ctx) {
+    // High-tech cannon
+    ctx.shadowColor = '#fbbf24';
+    ctx.shadowBlur = 10;
+    
+    // Main barrel
+    const barrelGradient = ctx.createLinearGradient(-10, -10, 40, 10);
+    barrelGradient.addColorStop(0, '#374151');
+    barrelGradient.addColorStop(0.5, '#1f2937');
+    barrelGradient.addColorStop(1, '#111827');
+    
+    ctx.fillStyle = barrelGradient;
+    roundRect(ctx, -10, -10, 50, 20, 4, true, false);
+    
+    // Barrel details
+    ctx.fillStyle = '#6b7280';
+    for(let i = 0; i < 3; i++) {
+        ctx.fillRect(-5 + i * 15, -8, 2, 16);
+    }
+    
+    // Muzzle
+    ctx.fillStyle = '#fbbf24';
+    ctx.shadowBlur = 15;
+    roundRect(ctx, 35, -6, 12, 12, 2, true, false);
+    
+    // Muzzle glow
+    ctx.fillStyle = '#fcd34d';
+    ctx.beginPath();
+    ctx.arc(41, 0, 4, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.shadowBlur = 0;
+    
+    // Border
+    ctx.strokeStyle = '#fbbf24';
+    ctx.lineWidth = 2;
+    roundRect(ctx, -10, -10, 50, 20, 4, false, true);
+}
+    
+drawModernHealthBar(ctx) {
+    const barW = 600, barH = 22;
+    const x = (W - barW) / 2, y = 34; // Đẩy lên cao hơn một chút
+    const hpPerc = this.hp / this.maxHp;
+    const time = performance.now() * 0.002;
+
+    // Get boss colors
+    let primaryColor, secondaryColor, accentColor, bossName, bossIcon;
+    switch(this.bossType) {
+        case 'slime':
+            primaryColor = '#4ade80'; secondaryColor = '#22c55e'; accentColor = '#16a34a';
+            bossName = 'HOÀNG THẠCH ĐẾ'; bossIcon = '🟢'; 
+            break;
+        case 'wolf':
+            primaryColor = '#6366f1'; secondaryColor = '#4338ca'; accentColor = '#3730a3';
+            bossName = 'DẠ LANG THẦN'; bossIcon = '🐺'; 
+            break;
+        case 'golem':
+            primaryColor = '#78716c'; secondaryColor = '#57534e'; accentColor = '#44403c';
+            bossName = 'GOLEM ĐÁ'; bossIcon = '🗿';
+            break;
+        case 'witch':
+            primaryColor = '#7c3aed'; secondaryColor = '#6d28d9'; accentColor = '#4c1d95';
+            bossName = 'PHÙ THỦY BÓng ĐÊM'; bossIcon = '🔮';
+            break;
+        case 'treant':
+            primaryColor = '#16a34a'; secondaryColor = '#15803d'; accentColor = '#14532d';
+            bossName = 'NGƯỜI CÂY CỔ ĐẠI'; bossIcon = '🌳';
+            break;
+        default:
+            primaryColor = '#ef4444'; secondaryColor = '#dc2626'; accentColor = '#b91c1c';
+            bossName = `THỐNG SOÁI TẦNG ${bossMode.currentFloor || 1}`; bossIcon = '👹';
+            break;
+    }
+    
+    ctx.save();
+    ctx.globalAlpha = 0.82;
+
+    // Outer glow container - soft neon
+    ctx.shadowColor = accentColor;
+    ctx.shadowBlur = 18;
+
+    // Background container with glass effect (modern dark glass)
+    const bgGradient = ctx.createLinearGradient(x, y - 6, x, y + barH + 6);
+    bgGradient.addColorStop(0, 'rgba(10, 20, 40, 0.55)');
+    bgGradient.addColorStop(0.5, 'rgba(6, 13, 28, 0.7)');
+    bgGradient.addColorStop(1, 'rgba(10, 20, 40, 0.55)');
+    ctx.fillStyle = bgGradient;
+    roundRect(ctx, x - 5, y - 5, barW + 10, barH + 10, 18, true, false);
+
+    ctx.shadowBlur = 0;
+
+    // Inner background (sleek gradient)
+    const innerBg = ctx.createLinearGradient(x, y, x, y + barH);
+    innerBg.addColorStop(0, 'rgba(24, 37, 63, 0.6)');
+    innerBg.addColorStop(0.5, 'rgba(15, 23, 42, 0.72)');
+    innerBg.addColorStop(1, 'rgba(24, 37, 63, 0.6)');
+    ctx.fillStyle = innerBg;
+    roundRect(ctx, x, y, barW, barH, 12, true, false);
+
+    // Top highlight line
+    ctx.save();
+    ctx.globalAlpha = 0.4;
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x + 8, y + 4);
+    ctx.lineTo(x + barW - 8, y + 4);
+    ctx.stroke();
+    ctx.restore();
+
+    // HP fill with animated gradient
+    if (hpPerc > 0) {
+        const hpGradient = ctx.createLinearGradient(x, y, x + barW * hpPerc, y);
+        hpGradient.addColorStop(0, `${primaryColor}c4`);
+        hpGradient.addColorStop(0.35, `${secondaryColor}a8`);
+        hpGradient.addColorStop(0.75, `${primaryColor}c4`);
+        hpGradient.addColorStop(1, `${accentColor}a8`);
+
+        ctx.fillStyle = hpGradient;
+        ctx.shadowColor = primaryColor;
+        ctx.shadowBlur = 10;
+        roundRect(ctx, x + 2, y + 2, (barW - 4) * hpPerc, barH - 4, 9, true, false);
+
+        // Animated shine effect
+        const shinePos = (Math.sin(time) + 1) * 0.5;
+        const shineGradient = ctx.createLinearGradient(
+            x + (barW * hpPerc * shinePos) - 30, y,
+            x + (barW * hpPerc * shinePos) + 30, y
+        );
+        shineGradient.addColorStop(0, 'rgba(255, 255, 255, 0)');
+        shineGradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.2)');
+        shineGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        ctx.fillStyle = shineGradient;
+        roundRect(ctx, x + 2, y + 2, (barW - 4) * hpPerc, barH - 4, 9, true, false);
+
+        ctx.shadowBlur = 0;
+    }
+
+    // Segmented HP indicators
+    const segments = this.maxHp;
+    const segmentWidth = (barW - 4) / segments;
+    ctx.strokeStyle = 'rgba(15, 23, 42, 0.2)';
+    ctx.lineWidth = 1;
+    for (let i = 1; i < segments; i++) {
+        const segX = x + 2 + (segmentWidth * i);
+        ctx.beginPath();
+        ctx.moveTo(segX, y + 2);
+        ctx.lineTo(segX, y + barH - 2);
+        ctx.stroke();
+    }
+
+    // Border with animated glow (sleek)
+    const borderGradient = ctx.createLinearGradient(x, y, x + barW, y);
+    const glowIntensity = (Math.sin(time * 2) + 1) * 0.22 + 0.3;
+    borderGradient.addColorStop(0, `rgba(251, 191, 36, ${glowIntensity})`);
+    borderGradient.addColorStop(0.5, `rgba(245, 158, 11, ${glowIntensity + 0.12})`);
+    borderGradient.addColorStop(1, `rgba(251, 191, 36, ${glowIntensity})`);
+
+    ctx.strokeStyle = borderGradient;
+    ctx.lineWidth = 1.6;
+    ctx.shadowColor = accentColor;
+    ctx.shadowBlur = 10;
+    roundRect(ctx, x, y, barW, barH, 11, false, true);
+    ctx.shadowBlur = 0;
+
+    // Accent bars on sides
+    ctx.save();
+    ctx.globalAlpha = 0.9;
+    const accentGradient = ctx.createLinearGradient(x, y, x + 24, y + barH);
+    accentGradient.addColorStop(0, `${primaryColor}aa`);
+    accentGradient.addColorStop(1, `${accentColor}55`);
+    ctx.fillStyle = accentGradient;
+    roundRect(ctx, x - 10, y + 2, 12, barH - 4, 6, true, false);
+
+    const accentGradientRight = ctx.createLinearGradient(x + barW - 24, y, x + barW, y + barH);
+    accentGradientRight.addColorStop(0, `${primaryColor}55`);
+    accentGradientRight.addColorStop(1, `${accentColor}aa`);
+    ctx.fillStyle = accentGradientRight;
+    roundRect(ctx, x + barW - 2, y + 2, 12, barH - 4, 6, true, false);
+    ctx.restore();
+
+    ctx.restore();
+
+    // Boss name - modern typography
+    const nameY = y - 18;
+    const nameGradient = ctx.createLinearGradient(x, nameY, x + barW, nameY);
+    nameGradient.addColorStop(0, '#f87171');
+    nameGradient.addColorStop(0.5, '#ef4444');
+    nameGradient.addColorStop(1, '#fb7185');
+
+    const displayName = `${bossIcon} ${bossName} ${bossIcon}`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = '600 16px "Segoe UI", "Poppins", sans-serif';
+    ctx.fillStyle = nameGradient;
+
+    // Soft shadow for depth
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+    ctx.shadowBlur = 8;
+    ctx.shadowOffsetY = 1;
+
+    // Outline
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.55)';
+    ctx.lineWidth = 2;
+    ctx.strokeText(displayName, x + barW / 2, nameY);
+    ctx.fillText(displayName, x + barW / 2, nameY);
+
+    // Underline accent
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
+    ctx.save();
+    ctx.globalAlpha = 0.45;
+    const underlineWidth = ctx.measureText(displayName).width * 0.55;
+    const underlineX = x + barW / 2 - underlineWidth / 2;
+    ctx.fillStyle = nameGradient;
+    roundRect(ctx, underlineX, nameY + 10, underlineWidth, 3, 2, true, false);
+    ctx.restore();
+    
+    // HP text with modern styling
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 12px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.9)';
+    ctx.lineWidth = 2;
+    
+    const hpText = `${this.hp.toFixed(1)} / ${this.maxHp.toFixed(1)}`;
+    ctx.strokeText(hpText, x + barW/2, y + barH/2);
+    ctx.fillText(hpText, x + barW/2, y + barH/2);
+    
+    // HP percentage on the right
+    ctx.fillStyle = primaryColor;
+    ctx.font = 'bold 10px Arial';
+    ctx.textAlign = 'right';
+    const percText = `${Math.round(hpPerc * 100)}%`;
+    ctx.strokeText(percText, x + barW - 12, y + barH/2);
+    ctx.fillText(percText, x + barW - 12, y + barH/2);
+    
+    // Critical HP warning effect
+    if (hpPerc <= 0.25) {
+        const warningAlpha = (Math.sin(time * 8) + 1) * 0.3 + 0.2;
+        ctx.fillStyle = `rgba(239, 68, 68, ${warningAlpha})`;
+        roundRect(ctx, x, y, barW, barH, 12, true, false);
+        
+        // Warning text
+        ctx.fillStyle = '#ef4444';
+        ctx.font = 'bold 10px Arial';
+        ctx.textAlign = 'left';
+        ctx.fillText('⚠ CRITICAL', x + 12, y + barH + 12);
+    }
+}
 
     shoot(now){
     // Boss không bị giới hạn ammo - bắn vô hạn
@@ -1585,41 +2785,149 @@ class Boss extends Tank {
     }
 
     update(dt){
-        if(!boss) return;
-        
-        // Chọn mục tiêu gần nhất thay vì ngẫu nhiên
-        let target = null;
-        let minDist = Infinity;
-        for(const t of [p1, p2]){
-            if(t && t.hp > 0){
-                const d = dist(this, t);
-                if(d < minDist){
-                    minDist = d;
-                    target = t;
-                }
-            }
-        }
-        
-        // Nhắm vào mục tiêu gần nhất
-        if(target){
-            this.angle = Math.atan2(target.y - this.y, target.x - this.x);
-        }
-        
-        const now = performance.now();
-        if(now - this.lastShot >= this.reload){
-            const b = this.shoot(now);
-            if(b) bullets.push(b);
-        }
-
-        // Boss-specific skills
-        this.updateBossSkills(dt, target, now);
-
-        // Adjust reload based on HP for normal boss
-        if(this.bossType === 'normal') {
-            if(this.hp < 7) this.reload = 2000;
-            else this.reload = 3000;
+    if(!boss) return;
+    
+    // KHÔNG GỌI Tank.prototype.update vì nó reset movement
+    // Tank.prototype.update.call(this, dt, {}); // XOÁ dòng này
+    
+    // Xử lý effects update (giữ nguyên phần này)
+    if(this.statusTimer > 0){
+        this.statusTimer = Math.max(0, this.statusTimer - dt);
+        if(this.statusTimer <= 0){
+            this.statusText = null;
         }
     }
+    if(this.healPulseTimer > 0){
+        this.healPulseTimer = Math.max(0, this.healPulseTimer - dt);
+    }
+
+    if(this.activeEffects){
+        for(const key in this.activeEffects){
+            const st = this.activeEffects[key];
+            if(!st || st.cancelled) continue;
+            if(typeof st.onUpdate === 'function'){
+                st.onUpdate(dt, this, st);
+            }
+        }
+    }
+
+    this.displayRadius += (this.r - this.displayRadius) * Math.min(1, dt/140);
+    this.effectPhase = (this.effectPhase + dt*0.0025) % (Math.PI*2);
+
+    const invisState = this.activeEffects && this.activeEffects.invis;
+    const targetAlpha = this.pendingRemoval ? 0 : (invisState ? 0.15 : 1);
+    const alphaLerp = Math.min(1, dt/160);
+    this.renderAlpha += (targetAlpha - this.renderAlpha) * alphaLerp;
+
+    if(this.pendingRemoval){
+        this.fadeOutTimer = Math.max(0, this.fadeOutTimer - dt);
+        if(this.fadeOutTimer <= 0){
+            this.hp = 0;
+        }
+    }
+
+    if(this.activeEffects && this.activeEffects.speed){
+        this.speedRingPhase = (this.speedRingPhase + dt*0.015) % (Math.PI*2);
+    }
+    
+    // Chọn mục tiêu gần nhất
+    let target = null;
+    let minDist = Infinity;
+    for(const t of [p1, p2]){
+        if(t && t.hp > 0){
+            const d = dist(this, t);
+            if(d < minDist){
+                minDist = d;
+                target = t;
+            }
+        }
+    }
+    
+    // Nhắm vào mục tiêu
+    if(target){
+        this.angle = Math.atan2(target.y - this.y, target.x - this.x);
+        
+        // AI Movement based on boss type
+        const distToTarget = dist(this, target);
+        let optimalDistance = 150;
+        
+        // Different movement patterns per boss type
+        switch(this.bossType) {
+            case 'slime':
+                optimalDistance = 120;
+                break;
+            case 'wolf':
+                optimalDistance = 100;
+                break;
+            case 'golem':
+                optimalDistance = 180;
+                break;
+            case 'witch':
+                optimalDistance = 200;
+                break;
+            case 'treant':
+                optimalDistance = 140;
+                break;
+            default:
+                optimalDistance = 150;
+        }
+        
+        // THÊM: Movement code (không bị skip bởi isJumping)
+        if(this.moveSpeed > 0 && !this.isJumping) {
+            if(distToTarget > optimalDistance + 50) {
+                // Move towards player
+                this.speed += this.moveSpeed * dt/16;
+            } else if(distToTarget < optimalDistance - 30) {
+                // Move away from player
+                this.speed -= this.moveSpeed * dt/16;
+            } else {
+                // In optimal range - still move slightly for dynamic behavior
+                this.speed += (Math.random() - 0.5) * this.moveSpeed * dt/32;
+            }
+            
+            // Apply movement with collision
+            this.speed *= this.friction;
+            const moveX = Math.cos(this.angle) * this.speed;
+            const moveY = Math.sin(this.angle) * this.speed;
+            const targetX = clamp(this.x + moveX, this.r + 4, W - this.r - 4);
+            const targetY = clamp(this.y + moveY, this.r + 4, H - this.r - 4);
+            
+            const collidesAt = (px, py) => {
+                for(const o of obstacles){
+                    if(circleRectColl({ x: px, y: py, r: this.r }, o)){
+                        return true;
+                    }
+                }
+                return false;
+            };
+            
+            if(!collidesAt(targetX, targetY)){
+                this.x = targetX;
+                this.y = targetY;
+            } else {
+                this.speed *= -0.5;
+            }
+            
+            this.x = clamp(this.x, this.r + 4, W - this.r - 4);
+            this.y = clamp(this.y, this.r + 4, H - this.r - 4);
+        }
+    }
+        
+    const now = performance.now();
+    if(now - this.lastShot >= this.reload){
+        const b = this.shoot(now);
+        if(b) bullets.push(b);
+    }
+
+    // Boss-specific skills
+    this.updateBossSkills(dt, target, now);
+
+    // Adjust reload based on HP for normal boss
+    if(this.bossType === 'normal') {
+        if(this.hp < 7) this.reload = 2000;
+        else this.reload = 3000;
+    }
+}
     
     updateBossSkills(dt, target, now) {
         if (!target) return;
@@ -1631,6 +2939,15 @@ class Boss extends Tank {
             case 'wolf':
                 this.updateWolfSkills(dt, target, now);
                 break;
+            case 'golem':
+                this.updateGolemSkills(dt, target, now);
+                break;
+            case 'witch':
+                this.updateWitchSkills(dt, target, now);
+                break;
+            case 'treant':
+                this.updateTreantSkills(dt, target, now);
+                break;
             default:
                 this.updateNormalBossSkills(dt, target, now);
                 break;
@@ -1638,36 +2955,168 @@ class Boss extends Tank {
     }
     
     updateSlimeSkills(dt, target, now) {
-        // Jump Attack - CD 3s
-        if (now - this.skillCooldowns.jump >= 3000) {
-            const distToTarget = dist(this, target);
-            if (distToTarget < 150) {
-                this.jumpAttack(target);
-                this.skillCooldowns.jump = now;
-            }
-        }
+    // Update jump animation
+    if (this.isJumping) {
+        const jumpProgress = (now - this.jumpStartTime) / this.jumpDuration;
         
-        // Split when 50% HP
-        if (!this.hasSplit && this.hp <= this.maxHp * 0.5) {
-            this.splitSlime();
-            this.hasSplit = true;
+        if (jumpProgress >= 1) {
+            // Jump completed
+            this.x = this.jumpTargetPos.x;
+            this.y = this.jumpTargetPos.y;
+            this.isJumping = false;
+            
+            // Check for damage on landing (1 damage to players in range)
+            const playersInRange = tanks.filter(t => 
+                (t === p1 || t === p2) && t.hp > 0 && dist(this, t) < this.r + t.r + 30
+            );
+            
+            playersInRange.forEach(player => {
+                const skipDamage = devGodMode && (player === p1 || player === p2);
+                if (!player.shield && !skipDamage) {
+                    player.hp = Math.max(0, player.hp - 1);
+                    showStatus(player, '-1 HP', '#ef4444', 1500);
+                }
+            });
+            
+            if (playersInRange.length > 0) {
+                flashMsg('💥 Slime nhảy ép trúng mục tiêu!');
+            } else {
+                flashMsg('🟢 Slime đáp xuống!');
+            }
+            
+            explosions.push({
+                x: this.x, y: this.y, 
+                startTime: now, duration: 500,
+                color: '#4ade80', size: 50
+            });
+            
+        } else {
+            const t = jumpProgress;
+            const easeInOut = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+            
+            this.x = this.jumpStartPos.x + (this.jumpTargetPos.x - this.jumpStartPos.x) * easeInOut;
+            this.y = this.jumpStartPos.y + (this.jumpTargetPos.y - this.jumpStartPos.y) * easeInOut;
+        }
+    } else {
+        // Jump Attack - CD 3s, CHECK COOLDOWN ĐÚNG
+        const timeSinceLastJump = now - (this.skillCooldowns.jump || 0);
+        
+        if (timeSinceLastJump >= 3000) { // 3 giây cooldown
+            let closestPlayer = null;
+            let minDist = Infinity;
+            
+            [p1, p2].forEach(player => {
+                if (player && player.hp > 0) {
+                    const d = dist(this, player);
+                    if (d < minDist) {
+                        minDist = d;
+                        closestPlayer = player;
+                    }
+                }
+            });
+            
+            if (closestPlayer && minDist < 400) {
+                console.log('🟢 SLIME JUMP! Distance:', minDist, 'Cooldown OK:', timeSinceLastJump);
+                this.jumpAttack(closestPlayer);
+                this.skillCooldowns.jump = now; // CẬP NHẬT cooldown
+            }
         }
     }
     
+    
+    // Split when 50% HP
+    if (!this.hasSplit && this.hp <= this.maxHp * 0.5) {
+        this.splitSlime();
+        this.hasSplit = true;
+    }
+}
+    
     updateWolfSkills(dt, target, now) {
         // Dash Attack - CD 4s
-        if (now - this.skillCooldowns.dash >= 4000) {
+        const timeSinceLastDash = now - (this.skillCooldowns.dash || 0);
+        if (timeSinceLastDash >= 4000) {
             const distToTarget = dist(this, target);
-            if (distToTarget < 200) {
+            if (distToTarget < 300 && distToTarget > 50) { // Tăng range, tránh dash quá gần
+                console.log('🐺 WOLF DASH! Distance:', distToTarget, 'Cooldown OK:', timeSinceLastDash);
                 this.dashAttack(target);
                 this.skillCooldowns.dash = now;
             }
         }
         
         // Howl - CD 6s
-        if (now - this.skillCooldowns.howl >= 6000) {
+        const timeSinceLastHowl = now - (this.skillCooldowns.howl || 0);
+        if (timeSinceLastHowl >= 6000) {
+            console.log('🌑 WOLF HOWL! Cooldown OK:', timeSinceLastHowl);
             this.howlAttack();
             this.skillCooldowns.howl = now;
+        }
+    }
+    
+    updateGolemSkills(dt, target, now) {
+        // Ground Slam - CD 5s
+        const timeSinceLastSlam = now - (this.skillCooldowns.groundSlam || 0);
+        if (timeSinceLastSlam >= 5000) {
+            const distToTarget = dist(this, target);
+            if (distToTarget < 200) {
+                console.log('🗿 GOLEM GROUND SLAM!');
+                this.groundSlamAttack(target, now);
+                this.skillCooldowns.groundSlam = now;
+            }
+        }
+        
+        // Stone Defense - CD 10s
+        const timeSinceLastDefense = now - (this.skillCooldowns.defense || 0);
+        if (timeSinceLastDefense >= 10000) {
+            console.log('🛡️ GOLEM DEFENSE!');
+            this.stoneDefenseAttack(now);
+            this.skillCooldowns.defense = now;
+        }
+    }
+    
+    updateWitchSkills(dt, target, now) {
+        // Dark Orbs - CD 4s
+        const timeSinceLastOrbs = now - (this.skillCooldowns.darkOrbs || 0);
+        if (timeSinceLastOrbs >= 4000) {
+            console.log('🔮 WITCH DARK ORBS!');
+            this.darkOrbsAttack(now);
+            this.skillCooldowns.darkOrbs = now;
+        }
+        
+        // Teleport - CD 6s
+        const timeSinceLastTeleport = now - (this.skillCooldowns.teleport || 0);
+        if (timeSinceLastTeleport >= 6000) {
+            console.log('✨ WITCH TELEPORT!');
+            this.teleportAttack(now);
+            this.skillCooldowns.teleport = now;
+        }
+    }
+    
+    updateTreantSkills(dt, target, now) {
+        // Thorns - CD 5s
+        const timeSinceLastThorns = now - (this.skillCooldowns.thorns || 0);
+        if (timeSinceLastThorns >= 5000) {
+            console.log('🌿 TREANT THORNS!');
+            this.thornsAttack(target, now);
+            this.skillCooldowns.thorns = now;
+        }
+        
+        // Heal - CD 8s
+        const timeSinceLastHeal = now - (this.skillCooldowns.heal || 0);
+        if (timeSinceLastHeal >= 8000 && this.hp < this.maxHp) {
+            console.log('💚 TREANT HEAL!');
+            this.healAttack(now);
+            this.skillCooldowns.heal = now;
+        }
+        
+        // Roots - CD 12s
+        const timeSinceLastRoots = now - (this.skillCooldowns.roots || 0);
+        if (timeSinceLastRoots >= 12000) {
+            const distToTarget = dist(this, target);
+            if (distToTarget < 250) {
+                console.log('🌱 TREANT ROOTS!');
+                this.rootsAttack(target, now);
+                this.skillCooldowns.roots = now;
+            }
         }
     }
     
@@ -1683,19 +3132,26 @@ class Boss extends Tank {
     }
     
     jumpAttack(target) {
-        // Jump to target position
-        const angle = Math.atan2(target.y - this.y, target.x - this.x);
-        const jumpDistance = 80;
-        this.x += Math.cos(angle) * jumpDistance;
-        this.y += Math.sin(angle) * jumpDistance;
+        if (this.isJumping) return; // Already jumping
         
-        // Check if hit target
-        if (dist(this, target) < this.r + target.r + 10) {
-            target.hp -= 2; // 2 damage
-            flashMsg('Slime nhảy ép!');
-        } else {
-            flashMsg('Slime nhảy!');
-        }
+        // Start jump animation
+        this.isJumping = true;
+        this.jumpStartTime = performance.now();
+        this.jumpStartPos = {x: this.x, y: this.y};
+        
+        // Calculate jump target (closer to player)
+        const angle = Math.atan2(target.y - this.y, target.x - this.x);
+        const jumpDistance = 100;
+        this.jumpTargetPos = {
+            x: this.x + Math.cos(angle) * jumpDistance,
+            y: this.y + Math.sin(angle) * jumpDistance
+        };
+        
+        // Clamp target position to screen bounds
+        this.jumpTargetPos.x = Math.max(this.r + 10, Math.min(W - this.r - 10, this.jumpTargetPos.x));
+        this.jumpTargetPos.y = Math.max(this.r + 10, Math.min(H - this.r - 10, this.jumpTargetPos.y));
+        
+        flashMsg('🟢 Slime chuẩn bị nhảy ép!');
     }
     
     splitSlime() {
@@ -1721,32 +3177,319 @@ class Boss extends Tank {
     }
     
     dashAttack(target) {
-        // Dash towards target
+        // Create dash trail effect
+        const startX = this.x, startY = this.y;
         const angle = Math.atan2(target.y - this.y, target.x - this.x);
         const dashDistance = 120;
+        
+        // Create multiple trail particles
+        for(let i = 0; i < 8; i++) {
+            const trailX = startX + (Math.cos(angle) * dashDistance * i / 8);
+            const trailY = startY + (Math.sin(angle) * dashDistance * i / 8);
+            
+            explosions.push({
+                x: trailX, y: trailY,
+                startTime: performance.now() + i * 50,
+                duration: 300,
+                color: '#6366f1',
+                size: 20 - i * 2
+            });
+        }
+        
+        // Dash towards target
         this.x += Math.cos(angle) * dashDistance;
         this.y += Math.sin(angle) * dashDistance;
         
+        // Clamp to screen bounds
+        this.x = Math.max(this.r + 10, Math.min(W - this.r - 10, this.x));
+        this.y = Math.max(this.r + 10, Math.min(H - this.r - 10, this.y));
+        
         // Check if hit target
         if (dist(this, target) < this.r + target.r + 15) {
-            target.hp -= 2; // 2 damage
-            flashMsg('Sói lao tới!');
+            const skipDamage = devGodMode && (target === p1 || target === p2);
+            if (!skipDamage) {
+                target.hp -= 2; // 2 damage
+                showStatus(target, '-2 HP', '#ef4444', 1500);
+            }
+            flashMsg('⚡ Sói lao tới trúng mục tiêu!');
+            
+            // Impact effect
+            explosions.push({
+                x: this.x, y: this.y,
+                startTime: performance.now(),
+                duration: 400,
+                color: '#6366f1',
+                size: 50
+            });
         } else {
-            flashMsg('Sói phóng nhanh!');
+            flashMsg('🐺 Sói dash!');
         }
     }
     
     howlAttack() {
+        // Create howl wave effect
+        for(let i = 0; i < 5; i++) {
+            explosions.push({
+                x: this.x, y: this.y,
+                startTime: performance.now() + i * 100,
+                duration: 800,
+                color: '#1e1b4b',
+                size: 30 + i * 20,
+                isWave: true
+            });
+        }
+        
         // Reduce player speed for 2 seconds
         [p1, p2].forEach(player => {
             if (player && player.hp > 0) {
-                player.moveSpeed *= 0.8; // 20% speed reduction
+                player.moveSpeed *= 0.3; // 70% speed reduction
+                showStatus(player, 'Chậm lại mạnh!', '#6366f1', 2000);
+                
                 setTimeout(() => {
-                    player.moveSpeed = player.baseMoveSpeed;
+                    if (gameMode === 'vsboss') {
+                        // Reapply boss mode buffs instead of base speed
+                        reapplyPermanentBuffs();
+                    } else {
+                        player.moveSpeed = player.baseMoveSpeed;
+                    }
                 }, 2000);
             }
         });
-        flashMsg('Sói gầm đêm!');
+        flashMsg('🌑 Sói gầm đêm - Tốc độ giảm!');
+    }
+    
+    groundSlamAttack(target, now) {
+    const slamRadius = 80;
+    
+    // Visual effect
+    for(let i = 0; i < 3; i++) {
+        explosions.push({
+            x: this.x, y: this.y,
+            startTime: now + i * 150,
+            duration: 600,
+            color: '#78716c',
+            size: 40 + i * 25
+        });
+    }
+    
+    // Check damage to players in radius
+    [p1, p2].forEach(player => {
+        if (player && player.hp > 0) {
+            const distToPlayer = dist(this, player);
+            if (distToPlayer <= slamRadius) {
+                const skipDamage = devGodMode && (player === p1 || player === p2);
+                if (!skipDamage) {
+                    player.hp = Math.max(0, player.hp - 3);
+                    showStatus(player, '-3 HP', '#ef4444', 1500);
+                    
+                    // THÊM: Stun effect - GÁN TRỰC TIẾP vào player
+                    player.stunned = true;
+                    player.speed = 0; // Force stop movement
+                    
+                    // Clear stun sau 2 giây
+                    setTimeout(() => {
+                        if(player) {
+                            player.stunned = false;
+                        }
+                    }, 2000);
+                    
+                    showStatus(player, '⚡ CHOÁNG!', '#fbbf24', 2000);
+                    
+                    // Visual stun effect
+                    for(let i = 0; i < 3; i++) {
+                        explosions.push({
+                            x: player.x, y: player.y,
+                            startTime: now + i * 200,
+                            duration: 600,
+                            color: '#fbbf24',
+                            size: 15 + i * 5,
+                            isWave: true
+                        });
+                    }
+                }
+            }
+        }
+    });
+    
+    flashMsg('🗿 Golem đấm đất - Choáng 2s!');
+}
+    
+    stoneDefenseAttack(now) {
+        // Activate defense mode
+        this.isDefending = true;
+        this.damageReduction = 0.5; // 50% damage reduction
+        
+        // Visual effect
+        for(let i = 0; i < 4; i++) {
+            explosions.push({
+                x: this.x, y: this.y,
+                startTime: now + i * 200,
+                duration: 800,
+                color: '#fbbf24',
+                size: 35 + i * 15,
+                isWave: true
+            });
+        }
+        
+        // Remove defense after 4 seconds
+        setTimeout(() => {
+            this.isDefending = false;
+            this.damageReduction = 1;
+        }, 4000);
+        
+        flashMsg('🛡️ Golem phòng thủ đá - Giảm sát thương!');
+    }
+    
+    darkOrbsAttack(now) {
+        // Create 3 dark orbs in random directions
+        for(let i = 0; i < 3; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = 4;
+            
+            const bullet = new Bullet(this.x, this.y, angle, this);
+            bullet.damage = 2;
+            bullet.color = '#4c1d95';
+            bullet.r = 8;
+            bullet.glow = true;
+            bullet.glowColor = '#7c3aed';
+            bullet.shape = 'orb';
+            
+            bullets.push(bullet);
+        }
+        
+        // Visual effect
+        explosions.push({
+            x: this.x, y: this.y,
+            startTime: now,
+            duration: 400,
+            color: '#7c3aed',
+            size: 50
+        });
+        
+        flashMsg('🔮 Phù thủy bắn cầu bóng tối!');
+    }
+    
+    teleportAttack(now) {
+        // Visual effect at old position
+        explosions.push({
+            x: this.x, y: this.y,
+            startTime: now,
+            duration: 500,
+            color: '#a855f7',
+            size: 60
+        });
+        
+        // Teleport to random position
+        this.x = 60 + Math.random() * (W - 120);
+        this.y = 60 + Math.random() * (H - 120);
+        
+        // Visual effect at new position
+        explosions.push({
+            x: this.x, y: this.y,
+            startTime: now + 200,
+            duration: 500,
+            color: '#c084fc',
+            size: 60
+        });
+        
+        flashMsg('✨ Phù thủy dịch chuyển!');
+    }
+    
+    thornsAttack(target, now) {
+        // Create line of thorns towards target
+        const angle = Math.atan2(target.y - this.y, target.x - this.x);
+        const thornCount = 5;
+        const spacing = 40;
+        
+        for(let i = 1; i <= thornCount; i++) {
+            const thornX = this.x + Math.cos(angle) * spacing * i;
+            const thornY = this.y + Math.sin(angle) * spacing * i;
+            
+            // Visual effect
+            explosions.push({
+                x: thornX, y: thornY,
+                startTime: now + i * 100,
+                duration: 800,
+                color: '#16a34a',
+                size: 25
+            });
+            
+            // Check damage to players
+            [p1, p2].forEach(player => {
+                if (player && player.hp > 0) {
+                    const distToThorn = Math.hypot(player.x - thornX, player.y - thornY);
+                    if (distToThorn <= 30) {
+                        const skipDamage = devGodMode && (player === p1 || player === p2);
+                        if (!skipDamage) {
+                            player.hp = Math.max(0, player.hp - 3);
+                            showStatus(player, '-3 HP', '#ef4444', 1500);
+                        }
+                    }
+                }
+            });
+        }
+        
+        flashMsg('🌿 Người cây tạo gai đâm!');
+    }
+    
+    healAttack(now) {
+        // Heal self
+        const healAmount = 3;
+        this.hp = Math.min(this.maxHp, this.hp + healAmount);
+        this.isHealing = true;
+        
+        // Visual effect
+        for(let i = 0; i < 4; i++) {
+            explosions.push({
+                x: this.x, y: this.y,
+                startTime: now + i * 150,
+                duration: 600,
+                color: '#22c55e',
+                size: 30 + i * 10,
+                isWave: true
+            });
+        }
+        
+        showStatus(this, `+${healAmount} HP`, '#22c55e', 2000);
+        
+        // Remove healing visual after 2 seconds
+        setTimeout(() => {
+            this.isHealing = false;
+        }, 2000);
+        
+        flashMsg('💚 Người cây hồi phục!');
+    }
+    
+    rootsAttack(target, now) {
+        // Root all players within range
+        [p1, p2].forEach(player => {
+            if (player && player.hp > 0) {
+                const distToPlayer = dist(this, player);
+                if (distToPlayer <= 250) {
+                    player.rooted = true;
+                    showStatus(player, 'Bị trói!', '#16a34a', 2000);
+                    
+                    // Visual effect around player
+                    for(let i = 0; i < 3; i++) {
+                        explosions.push({
+                            x: player.x, y: player.y,
+                            startTime: now + i * 100,
+                            duration: 700,
+                            color: '#15803d',
+                            size: 20 + i * 8,
+                            isWave: true
+                        });
+                    }
+                    
+                    // Remove root after 2 seconds
+                    setTimeout(() => {
+                        player.rooted = false;
+                    }, 2000);
+                }
+            }
+        });
+        
+        flashMsg('🌱 Người cây triệu hồi rễ cây!');
     }
 }
 
@@ -1800,6 +3543,7 @@ class Bullet{
         this.glow = false;
         this.explosionRadius = 80;
         this.isHoming = !!(owner && owner.homing);
+        this.homingStartTime = this.isHoming ? performance.now() : null;
         this.isExplosive = !!(owner && owner.explosive);
         this.isRicochet = !!(owner && owner.ricochet);
         this.isPiercing = !!(owner && owner.pierce);
@@ -1807,7 +3551,11 @@ class Bullet{
         this.isTrail = !!(owner && owner.trailBullet);
         this.piercedTargets = null;
         if(this.isPiercing) this.piercedTargets = new Set();
-        this.damage = 1;
+        if(devOneHitKill && devMode && (owner === p1 || owner === p2)){
+            this.damage = 999999;
+        } else {
+            this.damage = owner ? (owner.damage || 1) : 1;
+        }
         this.homingTarget = null;
         this.lastTrailX = x;
         this.lastTrailY = y;
@@ -1823,6 +3571,13 @@ class Bullet{
     }
 
     // --- HOMING (nếu chủ sở hữ có homing) ---
+    if(this.isHoming){
+        // Auto-disable homing after 1 second
+        if(this.homingStartTime && performance.now() - this.homingStartTime > 1000){
+            this.isHoming = false;
+            this.homingTarget = null;
+        }
+    }
     if(this.isHoming){
         const speed = Math.hypot(this.vx,this.vy) || 6;
         if(this.homingTarget && !tanks.includes(this.homingTarget)){
@@ -2144,6 +3899,70 @@ class Bullet{
             ctx.rotate(Math.atan2(this.vy, this.vx));
             const size = this.r * 2;
             ctx.fillRect(-size/2, -size/2, size, size);
+        } else if(this.shape === 'slime'){
+            // Animated slime bullet
+            const time = performance.now() * (this.wobbleSpeed || 0.005);
+            ctx.beginPath();
+            const points = 6;
+            for(let i = 0; i < points; i++) {
+                const angle = (i / points) * Math.PI * 2;
+                const wobble = Math.sin(time + i) * 1;
+                const radius = this.r + wobble;
+                const x = this.x + Math.cos(angle) * radius;
+                const y = this.y + Math.sin(angle) * radius;
+                
+                if(i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.closePath();
+            ctx.fill();
+        } else if(this.shape === 'energy'){
+            // Energy bullet with trail
+            ctx.translate(this.x, this.y);
+            ctx.rotate(Math.atan2(this.vy, this.vx));
+            
+            // Energy core
+            const coreGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, this.r);
+            coreGradient.addColorStop(0, this.color);
+            coreGradient.addColorStop(0.7, this.color);
+            coreGradient.addColorStop(1, 'rgba(99, 102, 241, 0.3)');
+            ctx.fillStyle = coreGradient;
+            ctx.beginPath();
+            ctx.arc(0, 0, this.r, 0, Math.PI*2);
+            ctx.fill();
+            
+            // Energy tail
+            ctx.fillStyle = 'rgba(99, 102, 241, 0.6)';
+            ctx.beginPath();
+            ctx.ellipse(-this.r, 0, this.r * 1.5, this.r * 0.5, 0, 0, Math.PI * 2);
+            ctx.fill();
+        } else if(this.shape === 'tech'){
+            // Tech bullet with pulse
+            const time = performance.now() * (this.pulseSpeed || 0.008);
+            const pulse = 1 + Math.sin(time) * 0.3;
+            
+            ctx.translate(this.x, this.y);
+            ctx.rotate(Math.atan2(this.vy, this.vx));
+            
+            // Tech core
+            const techGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, this.r * pulse);
+            techGradient.addColorStop(0, '#fca5a5');
+            techGradient.addColorStop(0.5, this.color);
+            techGradient.addColorStop(1, 'rgba(239, 68, 68, 0.3)');
+            ctx.fillStyle = techGradient;
+            ctx.beginPath();
+            ctx.arc(0, 0, this.r * pulse, 0, Math.PI*2);
+            ctx.fill();
+            
+            // Tech lines
+            ctx.strokeStyle = '#fca5a5';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(-this.r, 0);
+            ctx.lineTo(this.r, 0);
+            ctx.moveTo(0, -this.r);
+            ctx.lineTo(0, this.r);
+            ctx.stroke();
         } else {
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
@@ -2176,6 +3995,34 @@ function styleBulletForOwner(bullet, owner){
     bullet.guidelineColor = null;
     bullet.glow = false;
     bullet.explosionRadius = 80;
+    
+    // Special styling for boss bullets
+    if (owner instanceof Boss) {
+        bullet.r = 8; // Larger boss bullets
+        bullet.glow = true;
+        bullet.glowColor = owner.color;
+        bullet.glowIntensity = 15;
+        
+        // Boss type specific bullet effects
+        switch(owner.bossType) {
+            case 'slime':
+                bullet.color = '#4ade80';
+                bullet.shape = 'slime';
+                bullet.wobbleSpeed = 0.005;
+                break;
+            case 'wolf':
+                bullet.color = '#6366f1';
+                bullet.shape = 'energy';
+                bullet.trailLength = 8;
+                break;
+            default:
+                bullet.color = '#ef4444';
+                bullet.shape = 'tech';
+                bullet.pulseSpeed = 0.008;
+                break;
+        }
+        return;
+    }
     const isHoming = !!owner.homing;
     const isExplosive = !!owner.explosive;
     const isRicochet = !!owner.ricochet;
@@ -2940,48 +4787,52 @@ function applyEffect(target,name,duration,applyFn,revertFn,onUpdate){
 function applyPoisonEffect(target, duration=2000){
     if(!target || target.hp <= 0) return;
     if(devGodMode && (target === p1 || target === p2)) return;
+    
     const color = BUFF_COLORS.poison;
     const now = performance.now();
     const existing = target.activeEffects ? target.activeEffects.poison : null;
     const prevRemaining = existing && existing.expires ? Math.max(0, existing.expires - now) : 0;
     const totalDuration = prevRemaining + duration;
     const prevStack = existing ? (existing.stack || 1) : 0;
+    
     const effPoison = applyEffect(target,'poison',totalDuration,
         state=>{
             state.stack = 1;
-            state.damagePerSecond = 0.05;
+            state.damagePerSecond = 0.3;
             state.meta = state.meta || {};
             state.meta.color = color;
-            state.onUpdate = function(dt, tank, st){
-                if(!tank || tank.hp <= 0) return;
-                if(tank.shield) return;
-                const stacks = st.stack || 1;
-                const dps = st.damagePerSecond || 0.05;
-                const damage = dps * stacks * dt / 1000;
-                if(damage > 0){
-                    tank.hp = Math.max(0, tank.hp - damage);
-                }
-            };
+            state.meta.label = `Độc x1`; // Khởi tạo label
         },
         state=>{
             if(state){
                 state.stack = 0;
-                if(state.onUpdate) delete state.onUpdate;
+            }
+        },
+        // onUpdate callback
+        function(dt, tank, st){
+            if(!tank || tank.hp <= 0) return;
+            if(tank.shield) return;
+            const stacks = st.stack || 1;
+            const dps = st.damagePerSecond || 0.3;
+            const damage = dps * stacks * dt / 1000;
+            if(damage > 0){
+                tank.hp = Math.max(0, tank.hp - damage);
             }
         }
     );
+    
     effPoison.stack = prevStack + 1;
-    effPoison.damagePerSecond = 0.05;
+    effPoison.damagePerSecond = 0.3;
     effPoison.meta = effPoison.meta || {};
     effPoison.meta.color = color;
     effPoison.meta.label = `Độc x${effPoison.stack}`;
-    tagEffect(effPoison, effPoison.meta.label, color);
+    
     showStatus(target,'Nhiễm độc', color, 1200);
 }
 const buffTypes = [
     'heal','speed','homing','invis','shrink','shield','rapidfire','bigbullet','clone',
     'shotgun','ricochet','giantEnemy','reverse','explosive','root','silence','pierce','poison','nuke',
-    'possession','trail','fireRate','fury'
+    'possession','trail','fury'
 ];
 
 // Boss Mode exclusive buffs
@@ -3081,13 +4932,27 @@ const BuffFactory = {
     }
 };
 
+function getAvailableBuffsForMode() {
+    const bossModeBannedBuffs = ['nuke', 'invis', 'reverse'];
+    
+    if (gameMode === 'vsboss') {
+        return buffTypes.filter(buff => !bossModeBannedBuffs.includes(buff));
+    }
+    
+    return buffTypes;
+}
+
+// Sửa hàm spawnBuff
 function spawnBuff(type){
     let x,y,tries=0;
     do{x=60+Math.random()*(W-120); y=60+Math.random()*(H-120); tries++;} 
     while((obstacles.some(o=>circleRectColl({x,y,r:10},o)) || tanks.some(t=>dist(t,{x,y})<t.r+10)) && tries<50);
     if(tries>=50) return;
 
-    if(!type) type = buffTypes[Math.floor(Math.random()*buffTypes.length)];
+    if(!type) {
+        const availableBuffs = getAvailableBuffsForMode();
+        type = availableBuffs[Math.floor(Math.random() * availableBuffs.length)];
+    }
     buffs.push(new Buff(x,y,type));
 }
 
@@ -3124,8 +4989,13 @@ function renderEffects(t, el){
 function updateHUD(){
     const p1Fill = document.getElementById('p1HpFill');
     const p2Fill = document.getElementById('p2HpFill');
+    const p1Text = document.getElementById('p1HpText');
+    const p2Text = document.getElementById('p2HpText');
+    
     if(p1Fill) p1Fill.style.width = `${(p1.hp/ p1.maxHp)*100}%`;
     if(p2Fill) p2Fill.style.width = `${(p2.hp/ p2.maxHp)*100}%`;
+    if(p1Text) p1Text.textContent = `HP: ${p1.hp.toFixed(1)}/${p1.maxHp.toFixed(1)}`;
+    if(p2Text) p2Text.textContent = `HP: ${p2.hp.toFixed(1)}/${p2.maxHp.toFixed(1)}`;
 
     const board = document.getElementById('scoreBoard');
     const scoreP1El = document.getElementById('scoreP1Value');
@@ -3171,11 +5041,9 @@ function drawMaze(ctx){
 }
 function resetAfterKill(){
     if (gameMode === 'vsboss') {
-        // Boss mode reset - only reset positions and health, keep permanent buffs
-        p1.hp = p1.maxHp; p1.x = 110; p1.y = 110; p1.vx = 0; p1.vy = 0; p1.angle = 0;
-        if (bossMode.playerCount === 2) {
-            p2.hp = p2.maxHp; p2.x = 790; p2.y = 450; p2.vx = 0; p2.vy = 0; p2.angle = Math.PI;
-        }
+        // Boss mode reset - only reset positions, keep permanent buffs
+        p1.x = 110; p1.y = 110; p1.vx = 0; p1.vy = 0; p1.angle = 0;
+        p2.x = 790; p2.y = 450; p2.vx = 0; p2.vy = 0; p2.angle = Math.PI;
         
         // Reset boss if exists
         if (boss) {
@@ -3190,12 +5058,25 @@ function resetAfterKill(){
         bullets = []; buffs = []; explosions = []; hitExplosions = []; pickupFX = []; trails = [];
         tanks = tanks.filter(t => !t.isClone && !t.isMiniSlime);
         
-        // Reapply permanent buffs
+        // THAY ĐỔI: Đảm bảo p1 và p2 luôn có trong tanks
+        if (!tanks.includes(p1)) tanks.push(p1);
+        if (!tanks.includes(p2)) tanks.push(p2);
+        
+        // Reapply permanent buffs FIRST, then heal
         reapplyPermanentBuffs();
+        
+        // Full heal AFTER buffs are applied (so maxHp is correct)
+        p1.hp = p1.maxHp;
+        p2.hp = p2.maxHp;
     } else {
         // Normal PvP reset
         p1.hp = p1.maxHp; p1.x = 110; p1.y = 110; p1.vx = 0; p1.vy = 0; p1.angle = 0; p1.resetStatus();
         p2.hp = p2.maxHp; p2.x = 790; p2.y = 450; p2.vx = 0; p2.vy = 0; p2.angle = Math.PI; p2.resetStatus();
+        p1.possession = false; p1.possessionFired = false;
+        p2.possession = false; p2.possessionFired = false;
+        p1.silenced = false; p2.silenced = false;
+        p1.rooted = false; p2.rooted = false;
+        p1.invisible = false; p2.invisible = false;
         bullets = []; buffs = []; explosions = []; hitExplosions = []; pickupFX = []; trails = [];
         tanks = tanks.filter(t => !t.isClone);
         if(tanks.length < 2){
@@ -3213,7 +5094,6 @@ function resetAfterKill(){
     bullets=[]; 
     buffs=[];
     buffTimer=0;
-    // Tạo map ngẫu nhiên mới mỗi khi reset
     randomObstacles();
     applyStatSettings();
 }
@@ -3233,11 +5113,19 @@ function startBossMode() {
     p1.hp = p1.maxHp;
     p2.hp = p2.maxHp;
     
-    // Reset any boss mode specific properties
-    p1.damage = 1;
-    p2.damage = 1;
-    p1.bulletSpeedMultiplier = 1;
-    p2.bulletSpeedMultiplier = 1;
+    // Initialize boss mode specific properties
+    [p1, p2].forEach(player => {
+        player.damage = 1;
+        player.bulletSpeedMultiplier = 1;
+        
+        // Initialize bossBuffStats for tracking
+        player.bossBuffStats = {
+            baseDamage: 1,
+            baseMaxHp: player.maxHp,
+            baseMoveSpeed: player.baseMoveSpeed || 0.5,
+            baseBulletSpeed: 1
+        };
+    });
     
     resetAfterKill();
     spawnBossForFloor(bossMode.currentFloor);
@@ -3249,14 +5137,20 @@ function exitBossMode() {
     bossMode.active = false;
     bossMode.showingBuffSelection = false;
     
-    // Reset to normal PvP
+    // Clear boss mode buffs FIRST
+    bossMode.permanentBuffs = [];
+    
+    // Reset to normal PvP (this will now reset stats properly)
     tanks = [p1, p2];
     p1.resetStatus();
     p2.resetStatus();
+    p1.hp = p1.maxHp;
     p2.hp = p2.maxHp;
     
-    // Clear boss mode buffs
-    bossMode.permanentBuffs = [];
+    // Clear boss buff stats
+    p1.bossBuffStats = null;
+    p2.bossBuffStats = null;
+    
     activeEffects = [];
     p1.effects = new Map();
     p2.effects = new Map();
@@ -3291,6 +5185,18 @@ function spawnBossForFloor(floor) {
             bossType = 'wolf';
             bossName = 'Sói Đêm';
             break;
+        case 3:
+            bossType = 'golem';
+            bossName = 'Golem Đá';
+            break;
+        case 4:
+            bossType = 'witch';
+            bossName = 'Phù Thủy Bóng Đêm';
+            break;
+        case 5:
+            bossType = 'treant';
+            bossName = 'Người Cây Cổ Đại';
+            break;
         default:
             bossType = 'normal';
             bossName = `Boss Tầng ${floor}`;
@@ -3310,7 +5216,7 @@ function spawnBossForFloor(floor) {
     
     tanks.push(boss);
     console.log('Boss added to tanks. Tanks length:', tanks.length);
-    flashMsg(`${bossName} xuất hiện! HP: ${Math.round(boss.hp)}`);
+    flashMsg(`${bossName} xuất hiện! HP: ${boss.hp.toFixed(1)}`);
 }
 
 function showBuffSelection() {
@@ -3335,25 +5241,35 @@ function selectBossBuff(buffIndex) {
     if (!bossMode.showingBuffSelection || buffIndex >= bossMode.availableBuffs.length) return;
     
     const selectedBuff = bossMode.availableBuffs[buffIndex];
+    
+    console.log('🎁 Selected buff:', selectedBuff);
+    console.log('📦 Before selection:', bossMode.permanentBuffs);
+    
+    // Thêm vào permanent buffs
     bossMode.permanentBuffs.push(selectedBuff);
     
-    // Apply the buff permanently
+    console.log('📦 After selection:', bossMode.permanentBuffs);
+    
+    // Apply buff ngay lập tức
     applyBossModeBuff(selectedBuff);
     
     bossMode.showingBuffSelection = false;
     hideBuffSelectionUI();
     
-    flashMsg(`Buff đã chọn: ${getBossBuffName(selectedBuff)}`);
+    flashMsg(`✨ Buff đã chọn: ${getBossBuffName(selectedBuff)}`);
     
-    // Tăng floor SAU KHI chọn buff
+    // Tăng floor
     bossMode.currentFloor++;
     updateGameModeUI();
     
-    // Reset và spawn boss mới
+    console.log('🎮 Floor increased to:', bossMode.currentFloor);
+    
+    // Reset và spawn boss mới SAU 1 giây
     setTimeout(() => {
+        console.log('🔄 Resetting for new floor...');
         resetAfterKill();
         spawnBossForFloor(bossMode.currentFloor);
-    }, 500);
+    }, 1000);
 }
 
 function getBossBuffName(buffType) {
@@ -3367,34 +5283,180 @@ function getBossBuffName(buffType) {
 }
 
 function applyBossModeBuff(buffType) {
-    const targets = [p1, p2]; // Always apply to both players in 2P mode
+    console.log('🎯 APPLYING BOSS BUFF:', buffType);
+    console.log('Current gameMode:', gameMode);
     
-    targets.forEach(target => {
-        if (!target) return;
+    // Only apply boss buffs in boss mode
+    if (gameMode !== 'vsboss') {
+        console.log('❌ Not in boss mode, skipping buff application');
+        return;
+    }
+    
+    const targets = [p1, p2];
+    console.log('Targets to apply buff to:', targets.length);
+    
+    targets.forEach((target, index) => {
+        if (!target) {
+            console.log(`❌ Target ${index} is null`);
+            return;
+        }
+        
+        const playerName = target === p1 ? 'P1' : 'P2';
+        console.log(`🎯 Applying ${buffType} to ${playerName}`);
+        
+        // Khởi tạo bossBuffStats nếu chưa có
+        if (!target.bossBuffStats) {
+            console.log(`Initializing bossBuffStats for ${playerName}`);
+            target.bossBuffStats = {
+                baseDamage: 1,
+                baseMaxHp: 3,
+                baseMoveSpeed: target.baseMoveSpeed || 0.5,
+                baseBulletSpeed: 1
+            };
+        }
+        
+        const stats = target.bossBuffStats;
+        console.log(`📊 ${playerName} stats before buff:`, {
+            damage: target.damage,
+            maxHp: target.maxHp,
+            moveSpeed: target.moveSpeed,
+            bulletSpeed: target.bulletSpeedMultiplier,
+            bossBuffStats: stats
+        });
         
         switch(buffType) {
             case 'muscle':
-                target.damage = (target.damage || 1) + 1; // +1 damage (stackable)
+                // Tăng BASE damage (cộng dồn)
+                stats.baseDamage += 1;
+                target.damage = stats.baseDamage;
+                console.log(`💪 ${playerName} damage: ${stats.baseDamage - 1} → ${stats.baseDamage}`);
+                showStatus(target, `💪 Damage: ${target.damage}`, '#ff6b35', 2000);
                 break;
+                
             case 'thickSkin':
-                target.maxHp += 1; // +1 max HP (stackable)
-                target.hp = target.maxHp; // Full heal
+                // Tăng BASE max HP (cộng dồn)
+                const oldMaxHp = stats.baseMaxHp;
+                stats.baseMaxHp += 1;
+                target.maxHp = stats.baseMaxHp;
+                console.log(`🩸 ${playerName} maxHP: ${oldMaxHp} → ${stats.baseMaxHp}`);
+                showStatus(target, `🩸 Max HP: ${target.maxHp}`, '#e74c3c', 2000);
                 break;
+                
             case 'agility':
-                target.moveSpeed *= 1.05; // +5% speed (stackable)
+                // Tăng BASE speed (cộng dồn)
+                const oldSpeed = stats.baseMoveSpeed;
+                stats.baseMoveSpeed *= 1.05;
+                target.moveSpeed = stats.baseMoveSpeed;
+                target.baseMoveSpeed = stats.baseMoveSpeed; // Cập nhật base
+                console.log(`🏃 ${playerName} speed: ${oldSpeed.toFixed(3)} → ${stats.baseMoveSpeed.toFixed(3)}`);
+                showStatus(target, `🏃 Speed +5%`, '#2ecc71', 2000);
                 break;
+                
             case 'bulletSpeed':
-                // Increase bullet speed by 10% (stackable)
-                if (!target.bulletSpeedMultiplier) target.bulletSpeedMultiplier = 1;
-                target.bulletSpeedMultiplier *= 1.1;
+                // Tăng BASE bullet speed (cộng dồn)
+                const oldBulletSpeed = stats.baseBulletSpeed;
+                stats.baseBulletSpeed *= 1.1;
+                target.bulletSpeedMultiplier = stats.baseBulletSpeed;
+                console.log(`💨 ${playerName} bullet speed: ${oldBulletSpeed.toFixed(2)} → ${stats.baseBulletSpeed.toFixed(2)}`);
+                showStatus(target, `💨 Bullet +10%`, '#3498db', 2000);
                 break;
         }
+        
+        console.log(`📊 ${playerName} stats after buff:`, {
+            damage: target.damage,
+            maxHp: target.maxHp,
+            moveSpeed: target.moveSpeed,
+            bulletSpeed: target.bulletSpeedMultiplier
+        });
     });
+    
+    console.log('✅ Buff application completed');
 }
 
 function reapplyPermanentBuffs() {
-    bossMode.permanentBuffs.forEach(buff => {
+    console.log('🔄 REAPPLYING PERMANENT BUFFS');
+    console.log('Current gameMode:', gameMode);
+    console.log('Permanent buffs array:', bossMode.permanentBuffs);
+    console.log('Buffs count:', bossMode.permanentBuffs.length);
+    
+    if (gameMode !== 'vsboss') {
+        console.log('❌ Not in boss mode, skipping reapply');
+        return;
+    }
+    
+    if (bossMode.permanentBuffs.length === 0) {
+        console.log('No permanent buffs to apply');
+        return;
+    }
+    
+    console.log('📊 BEFORE RESET - P1 stats:', {
+        damage: p1.damage, 
+        maxHp: p1.maxHp, 
+        moveSpeed: p1.moveSpeed,
+        bulletSpeed: p1.bulletSpeedMultiplier
+    });
+    
+    // Reset về base stats ban đầu TRƯỚC KHI apply buffs
+    [p1, p2].forEach(player => {
+        if (player) {
+            // Initialize bossBuffStats if not exists
+            if (!player.bossBuffStats) {
+                console.log('Initializing bossBuffStats for', player === p1 ? 'P1' : 'P2');
+                player.bossBuffStats = {
+                    baseDamage: 1,
+                    baseMaxHp: 3,
+                    baseMoveSpeed: player.baseMoveSpeed || 0.5,
+                    baseBulletSpeed: 1
+                };
+            }
+            
+            // Reset về giá trị gốc THỰC SỰ
+            player.damage = 1;
+            player.maxHp = 3;
+            player.moveSpeed = player.baseMoveSpeed || 0.5;
+            player.bulletSpeedMultiplier = 1;
+            
+            // Reset bossBuffStats về base THỰC SỰ
+            player.bossBuffStats.baseDamage = 1;
+            player.bossBuffStats.baseMaxHp = 3;
+            player.bossBuffStats.baseMoveSpeed = player.baseMoveSpeed || 0.5;
+            player.bossBuffStats.baseBulletSpeed = 1;
+            
+            console.log(`🔄 ${player === p1 ? 'P1' : 'P2'} reset to base:`, {
+                damage: player.damage,
+                maxHp: player.maxHp,
+                moveSpeed: player.moveSpeed,
+                bulletSpeed: player.bulletSpeedMultiplier,
+                bossBuffStats: player.bossBuffStats
+            });
+        }
+    });
+    
+    console.log('📊 AFTER RESET - P1 stats:', {
+        damage: p1.damage, 
+        maxHp: p1.maxHp, 
+        moveSpeed: p1.moveSpeed,
+        bulletSpeed: p1.bulletSpeedMultiplier
+    });
+    
+    // Reapply ALL buffs từ đầu (cộng dồn)
+    bossMode.permanentBuffs.forEach((buff, index) => {
+        console.log(`📈 Applying buff ${index + 1}/${bossMode.permanentBuffs.length}:`, buff);
         applyBossModeBuff(buff);
+        console.log(`📊 After buff ${index + 1} - P1 stats:`, {
+            damage: p1.damage, 
+            maxHp: p1.maxHp, 
+            moveSpeed: p1.moveSpeed,
+            bulletSpeed: p1.bulletSpeedMultiplier
+        });
+    });
+    
+    console.log('✅ ALL BUFFS APPLIED! Final P1 stats:', {
+        damage: p1.damage, 
+        maxHp: p1.maxHp, 
+        hp: p1.hp,
+        moveSpeed: p1.moveSpeed?.toFixed(3),
+        bulletSpeed: p1.bulletSpeedMultiplier?.toFixed(2)
     });
 }
 
@@ -3431,7 +5493,14 @@ function spawnClone(tank){
     clone.update = function(dt, input){
         Tank.prototype.update.call(this, dt, input || {});
         this.speed = 0;
-        const target = tank === p1 ? p2 : p1;
+        let target;
+        if (gameMode === 'vsboss' && boss) {
+            // In boss mode, clone targets boss
+            target = boss;
+        } else {
+            // In PvP mode, clone targets other player
+            target = tank === p1 ? p2 : p1;
+        }
         if(target && target.hp > 0){
             this.angle = Math.atan2(target.y - this.y, target.x - this.x);
         }
@@ -3477,7 +5546,6 @@ const settingsTurnSpeedInput = document.getElementById('settingsTurnSpeed');
 const settingsFrictionInput = document.getElementById('settingsFriction');
 const settingsReloadRateInput = document.getElementById('settingsReloadRate');
 const settingsSpawnBotBtn = document.getElementById('settingsSpawnBot');
-const settingsSpawnBossBtn = document.getElementById('spawnBossBtn');
 
 function setDevMode(enabled){
     if(devMode === enabled) return;
@@ -3592,6 +5660,11 @@ function setInstructionsVisible(visible){
 }
 
 function applyStatSettings(){
+    console.log('🔧 APPLYING STAT SETTINGS');
+    console.log('Current gameMode:', gameMode);
+    console.log('P1 has bossBuffStats:', !!p1?.bossBuffStats);
+    console.log('P2 has bossBuffStats:', !!p2?.bossBuffStats);
+    
     if(!settingsMaxHpInput || !settingsSpeedInput || !settingsAmmoInput) return;
     const baseTank = p1 || p2;
 
@@ -3616,7 +5689,7 @@ function applyStatSettings(){
     settingsReloadInput && (settingsReloadInput.value = reload);
 
     let turnSpeed = settingsTurnSpeedInput ? parseFloat(settingsTurnSpeedInput.value) : NaN;
-    if(!Number.isFinite(turnSpeed)) turnSpeed = baseTank ? (baseTank.baseTurnSpeed ?? baseTank.turnSpeed) : 0.04;
+    if(!Number.isFinite(turnSpeed)) turnSpeed = baseTank ? (baseTank.baseTurnSpeed ?? baseTank.turnSpeed) : 0.06;
     if(turnSpeed <= 0) turnSpeed = 0.001;
     settingsTurnSpeedInput && (settingsTurnSpeedInput.value = turnSpeed);
 
@@ -3632,6 +5705,13 @@ function applyStatSettings(){
 
     [p1, p2].forEach(t=>{
         if(!t || t.isClone || t === boss) return;
+        
+        // Don't override boss mode buffed stats
+        if (gameMode === 'vsboss' && t.bossBuffStats) {
+            console.log(`🛡️ Skipping stat reset for ${t === p1 ? 'P1' : 'P2'} in boss mode`);
+            return;
+        }
+        
         t.maxHp = maxHp;
         t.hp = Math.min(t.hp, maxHp);
 
@@ -3671,7 +5751,6 @@ const EventManager = {
             [settingsDevModeInput, 'change', e => setDevMode(!!e.target.checked)],
             [settingsInstructionsInput, 'change', e => setInstructionsVisible(!!e.target.checked)],
             [settingsSpawnBotBtn, 'click', () => { spawnBot(); toggleSettingsPanel(false); }],
-            [settingsSpawnBossBtn, 'click', () => { spawnBoss(); toggleSettingsPanel(false); }]
         ];
         
         uiElements.forEach(([element, event, handler]) => {
@@ -3814,31 +5893,103 @@ function getBossBuffDescription(buffType) {
 }
 
 applyStatSettings();
+// Main Menu System
+let mainMenuVisible = true;
+const mainMenuOverlay = document.getElementById('mainMenuOverlay');
+const menuBtnPvP = document.getElementById('menuBtnPvP');
+const menuBtnBoss = document.getElementById('menuBtnBoss');
+const menuBtnSettings = document.getElementById('menuBtnSettings');
+
+function showMainMenu() {
+    mainMenuVisible = true;
+    if (mainMenuOverlay) {
+        mainMenuOverlay.style.display = 'flex';
+    }
+    // Pause game loop
+    canvas.style.filter = 'blur(5px)';
+}
+
+function hideMainMenu() {
+    mainMenuVisible = false;
+    if (mainMenuOverlay) {
+        mainMenuOverlay.style.display = 'none';
+    }
+    canvas.style.filter = 'none';
+}
+
+function returnToMainMenu() {
+    // Exit boss mode if active
+    if (gameMode === 'vsboss') {
+        exitBossMode();
+    }
+    
+    // Reset game state
+    roundEnding = false;
+    overlayText = null;
+    
+    // Close all panels
+    toggleSettingsPanel(false);
+    toggleInstructionsPanel(false);
+    
+    // Show main menu
+    showMainMenu();
+    
+    flashMsg('Quay về menu chính');
+}
+
+// Menu button event listeners
+if (menuBtnPvP) {
+    menuBtnPvP.addEventListener('click', () => {
+        hideMainMenu();
+        gameMode = 'pvp';
+        resetAfterKill();
+        flashMsg('Chế độ PvP - Bắt đầu!');
+    });
+}
+
+if (menuBtnBoss) {
+    menuBtnBoss.addEventListener('click', () => {
+        hideMainMenu();
+        startBossMode();
+    });
+}
+
+if (menuBtnSettings) {
+    menuBtnSettings.addEventListener('click', () => {
+        toggleSettingsPanel(true);
+    });
+}
+
+// Start with main menu visible
+if (mainMenuOverlay) {
+    showMainMenu();
+}
 updateGameModeUI();
 
 let last = performance.now();
 
 // Game UI variables
 let gameUI = {
-    settingsBtn: {x: W - 50, y: 10, w: 40, h: 40, hovered: false},
-    helpBtn: {x: W - 100, y: 10, w: 40, h: 40, hovered: false}
+    homeBtn: {x: W - 150, y: 10, w: 40, h: 40, hovered: false},
+    helpBtn: {x: W - 100, y: 10, w: 40, h: 40, hovered: false},
+    settingsBtn: {x: W - 50, y: 10, w: 40, h: 40, hovered: false}
 };
 
 function drawGameUI(ctx) {
-    // Draw settings button
-    const settingsBtn = gameUI.settingsBtn;
+    // Draw home button (leftmost)
+    const homeBtn = gameUI.homeBtn;
     ctx.save();
-    ctx.fillStyle = settingsBtn.hovered ? 'rgba(0,0,0,0.9)' : 'rgba(0,0,0,0.7)';
-    ctx.fillRect(settingsBtn.x, settingsBtn.y, settingsBtn.w, settingsBtn.h);
+    ctx.fillStyle = homeBtn.hovered ? 'rgba(0,0,0,0.9)' : 'rgba(0,0,0,0.7)';
+    ctx.fillRect(homeBtn.x, homeBtn.y, homeBtn.w, homeBtn.h);
     ctx.strokeStyle = 'rgba(255,255,255,0.3)';
     ctx.lineWidth = 1;
-    ctx.strokeRect(settingsBtn.x, settingsBtn.y, settingsBtn.w, settingsBtn.h);
+    ctx.strokeRect(homeBtn.x, homeBtn.y, homeBtn.w, homeBtn.h);
     
     ctx.fillStyle = '#f3f7ff';
-    ctx.font = '18px Arial';
+    ctx.font = '22px "Segoe UI Symbol", Arial';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText('⚙', settingsBtn.x + settingsBtn.w/2, settingsBtn.y + settingsBtn.h/2);
+    ctx.fillText('⌂', homeBtn.x + homeBtn.w/2, homeBtn.y + homeBtn.h/2);
     
     // Draw help button
     const helpBtn = gameUI.helpBtn;
@@ -3850,6 +6001,17 @@ function drawGameUI(ctx) {
     
     ctx.fillStyle = '#f3f7ff';
     ctx.fillText('?', helpBtn.x + helpBtn.w/2, helpBtn.y + helpBtn.h/2);
+    
+    // Draw settings button (rightmost)
+    const settingsBtn = gameUI.settingsBtn;
+    ctx.fillStyle = settingsBtn.hovered ? 'rgba(0,0,0,0.9)' : 'rgba(0,0,0,0.7)';
+    ctx.fillRect(settingsBtn.x, settingsBtn.y, settingsBtn.w, settingsBtn.h);
+    ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(settingsBtn.x, settingsBtn.y, settingsBtn.w, settingsBtn.h);
+    
+    ctx.fillStyle = '#f3f7ff';
+    ctx.fillText('⚙', settingsBtn.x + settingsBtn.w/2, settingsBtn.y + settingsBtn.h/2);
     ctx.restore();
 }
 
@@ -3869,6 +6031,11 @@ function circleColl(a, b){
 }
 
 function loop(now){
+    if (mainMenuVisible) {
+        requestAnimationFrame(loop);
+        return;
+    }
+    
     const dt = now - last; last = now;
     updateMovingObstacles(dt);
     tanks.forEach(t => t.update(dt,input));
@@ -3971,6 +6138,24 @@ for (let i = 0; i < bullets.length; i++) {
         const hitPoint = circleColl(t, { x: b.x, y: b.y, r: b.r || 4 });
 
         if (hitLine || hitPoint) {
+            // VS Boss Mode: Players can't damage each other
+            if (gameMode === 'vsboss') {
+                const isPlayerBullet = (b.owner === p1 || b.owner === p2);
+                const isPlayerTarget = (t === p1 || t === p2);
+                
+                // Skip if player bullet hits player
+                if (isPlayerBullet && isPlayerTarget) {
+                    continue;
+                }
+            }
+            
+            // Boss bullets can't damage boss or mini slimes
+            if (b.owner instanceof Boss || (b.owner && b.owner.isMiniSlime)) {
+                if (t instanceof Boss || t.isMiniSlime) {
+                    continue;
+                }
+            }
+            
             if(b.isPiercing){
                 if(!b.piercedTargets) b.piercedTargets = new Set();
                 if(b.piercedTargets.has(t)) continue;
@@ -3990,7 +6175,15 @@ for (let i = 0; i < bullets.length; i++) {
                     if (ddx*ddx + ddy*ddy <= radius2) {
                         const skipDamage = devGodMode && (tt === p1 || tt === p2);
                         if (!tt.shield && !skipDamage){
-                            tt.hp = Math.max(0, tt.hp - damage);
+                            let finalDamage = damage;
+                            
+                            // Apply Golem damage reduction
+                            if (tt instanceof Boss && tt.damageReduction && tt.damageReduction < 1) {
+                                finalDamage *= tt.damageReduction;
+                                finalDamage = Math.max(0.1, finalDamage); // Minimum damage
+                            }
+                            
+                            tt.hp = Math.max(0, tt.hp - finalDamage);
                             hitExplosions.push({
                                 x: tt.x, y: tt.y, color: b.color || '#f44',
                                 startTime: now, duration: 220
@@ -4010,7 +6203,14 @@ for (let i = 0; i < bullets.length; i++) {
                 const isPlayer = (t === p1 || t === p2);
                 const skipDamage = devGodMode && isPlayer;
                 if (!t.shield && !skipDamage) {
-                    const damage = Math.max(1, b.damage || 1);
+                    let damage = Math.max(1, b.damage || 1);
+                    
+                    // Apply Golem damage reduction
+                    if (t instanceof Boss && t.damageReduction && t.damageReduction < 1) {
+                        damage *= t.damageReduction;
+                        damage = Math.max(0.1, damage); // Minimum damage
+                    }
+                    
                     t.hp = Math.max(0, t.hp - damage);
                     hitExplosions.push({
                         x: t.x, y: t.y, color: b.color || '#fff',
@@ -4041,31 +6241,89 @@ for (let i = 0; i < bullets.length; i++) {
 
 
     // sau khi trừ HP xong, kiểm tra tank chết (chỉ khi không đang ending)
-    if (!roundEnding && !bossMode.showingBuffSelection) {
-        for(let i = tanks.length - 1; i >= 0; i--){
-            const t = tanks[i];
-            if(t.hp <= 0){
-                if(t.isClone){
-                    flashMsg(`Clone của ${t.color} bị hạ!`);
-                    tanks.splice(i, 1); // xóa clone chết
-                } else {
-                    // Nếu đang có boss, không reset ngay; chỉ khi cả P1 & P2 đều chết mới end
-                    if(boss){
-                        flashMsg(`${t===p1?'P1':'P2'} bị hạ!`);
-                    } else {
-                        if(t === p1) scoreP2++; // P2 thắng 1 điểm
-                        else scoreP1++;          // P1 thắng 1 điểm
-                        const winTxt = (t===p1?'P2':'P1') + ' WIN';
-                        overlayText = winTxt;
-                        overlayUntil = performance.now() + 1000; // 1 giây
+    // sau khi trừ HP xong, kiểm tra tank chết (chỉ khi không đang ending)
+if (!roundEnding && !bossMode.showingBuffSelection) {
+    for(let i = tanks.length - 1; i >= 0; i--){
+        const t = tanks[i];
+        if(t.hp <= 0){
+            if(t.isClone || t.isMiniSlime){
+                flashMsg(`Clone/Slime bị hạ!`);
+                tanks.splice(i, 1);
+            } else if (t === boss) {
+                // Boss chết - xử lý riêng ở phần sau
+                continue;
+            } else {
+                // THAY ĐỔI: Xử lý người chơi chết
+                if(boss && gameMode === 'vsboss'){
+                    const playerName = t===p1?'P1':'P2';
+                    flashMsg(`💀 ${playerName} bị hạ!`);
+                    console.log(`💀 ${playerName} died! HP: ${t.hp}`);
+                    
+                    // KHÔNG xóa khỏi tanks, chỉ đánh dấu chết
+                    t.renderAlpha = 0; // Ẩn xe tăng
+                    
+                    // Kiểm tra cả 2 người chết chưa
+                    const alivePlayers = [p1, p2].filter(p => p && p.hp > 0);
+                    console.log(`❤️ Alive players:`, alivePlayers.length);
+                    
+                    if (alivePlayers.length === 0) {
+                        console.log('🎮 GAME OVER - Starting end sequence...');
+                        overlayText = 'GAME OVER - Boss Wins!';
+                        overlayUntil = performance.now() + 2000;
                         roundEnding = true;
-                        setTimeout(()=>{ resetAfterKill(); overlayText=null; roundEnding=false; }, 1000);
-                        break;
+                        setTimeout(() => {
+                            console.log('🔄 Resetting game...');
+                            exitBossMode();
+                            overlayText = null;
+                            roundEnding = false;
+                        }, 2000);
                     }
+                } else {
+                    // PvP mode
+                    if(t === p1) scoreP2++;
+                    else scoreP1++;
+                    const winTxt = (t===p1?'P2':'P1') + ' WIN';
+                    overlayText = winTxt;
+                    overlayUntil = performance.now() + 1000;
+                    roundEnding = true;
+                    setTimeout(()=>{ resetAfterKill(); overlayText=null; roundEnding=false; }, 1000);
+                    break;
                 }
             }
         }
     }
+}
+
+// THÊM: Kiểm tra Boss chết
+if(!roundEnding && boss && boss.hp <= 0){
+    if (gameMode === 'vsboss') {
+        const index = tanks.indexOf(boss);
+        if(index !== -1) tanks.splice(index,1);
+        boss = null;
+        tanks = tanks.filter(t => !t.isMiniSlime);
+        overlayText = 'BOSS DEFEATED!';
+        overlayUntil = performance.now() + 2000;
+        roundEnding = true;
+        
+        setTimeout(() => {
+            overlayText = null;
+            roundEnding = false;
+            showBuffSelection();
+        }, 2000);
+    } else {
+        overlayText = 'BOSS DEFEATED';
+        overlayUntil = performance.now() + 1000;
+        roundEnding = true;
+        setTimeout(()=>{ 
+            const index = tanks.indexOf(boss);
+            if(index !== -1) tanks.splice(index,1);
+            boss = null;
+            resetAfterKill(); 
+            overlayText=null; 
+            roundEnding=false; 
+        }, 1000);
+    }
+}
 // Sau vòng for kiểm tra tank hp <=0 (chỉ khi không đang ending)
 if(!roundEnding && boss && boss.hp <= 0){
     if (gameMode === 'vsboss') {
@@ -4140,261 +6398,277 @@ if(!roundEnding && gameMode === 'pvp' && boss && p1.hp <= 0 && p2.hp <= 0){
     // -------------------------------------------
 
 
-    // Only spawn random buffs in PvP mode
-    if (gameMode === 'pvp') {
+    // Spawn random buffs in both PvP and Boss modes
+    if (gameMode === 'pvp' || gameMode === 'vsboss') {
         buffTimer += dt;
         if(buffTimer > 10000){ if(Math.random()<0.4) spawnBuff(); buffTimer=0;}
     }
 
-    for(const buff of buffs){
-        if(!buff.active) continue;
-        for(const t of tanks){
-            if(dist(t,buff) < t.r+buff.r){
-                // Optimized buff handling with factory pattern
-                switch(buff.type){
-    case 'heal':
-        BuffFactory.createEffect(t, 'heal', 20000);
-        break;
-    case 'speed':
-        BuffFactory.createEffect(t, 'speed', 10000);
-        break;
-    case 'homing':
-        BuffFactory.createEffect(t, 'homing', 10000);
-        break;
-    case 'invis':
-        BuffFactory.createEffect(t, 'invis', 10000);
-        break;
-    case 'shrink': {
-        flashMsg(`${t===p1?'P1':'P2'} thu nhỏ!`);
-        const effShrink = applyEffect(t,'shrink',10000,
-            state=>{
-                state.originalRadius = t.r;
-                t.r *= 0.7;
-            },
-            state=>{
-                if(state && state.originalRadius!==undefined) t.r = state.originalRadius;
-                else t.r = t.baseRadius;
+    // Trong loop(), tìm đoạn xử lý buff pickup:
+for(const buff of buffs){
+    if(!buff.active) continue;
+    for(const t of tanks){
+        if(dist(t,buff) < t.r+buff.r){
+            // Xác định target cho debuff
+            let debuffTarget = null;
+            
+            if (gameMode === 'vsboss' && boss) {
+                // Trong boss mode, debuff áp vào boss
+                const debuffBuffs = ['giantEnemy', 'reverse', 'root', 'silence', 'possession'];
+                if (debuffBuffs.includes(buff.type)) {
+                    debuffTarget = boss;
+                }
+            } else {
+                // PvP mode bình thường
+                debuffTarget = (t === p1) ? p2 : p1;
             }
-        );
-        tagEffect(effShrink,'Thu nhỏ',buff.color);
-        pickupFX.push({x:t.x,y:t.y,color:buff.color,start:now,duration:500});
-        showStatus(t,'Thu nhỏ',buff.color);
-        break;
-    }
-    case 'shield':
-        BuffFactory.createEffect(t, 'shield', 10000);
-        break;
-    case 'rapidfire': {
-        flashMsg(`${t===p1?'P1':'P2'} hồi đạn nhanh!`);
-        const effRapid = applyEffect(t,'rapidfire',10000,
-            state=>{
-                state.originalReloadRate = t.reloadRate;
-                t.reloadRate = t.baseReloadRate * 5;
-            },
-            state=>{
-                if(state && state.originalReloadRate!==undefined) t.reloadRate = state.originalReloadRate;
-                else t.reloadRate = t.baseReloadRate;
+            
+            switch(buff.type){
+                case 'heal':
+                    BuffFactory.createEffect(t, 'heal', 20000);
+                    break;
+                case 'speed':
+                    BuffFactory.createEffect(t, 'speed', 10000);
+                    break;
+                case 'homing':
+                    BuffFactory.createEffect(t, 'homing', 10000);
+                    break;
+                case 'invis':
+                    BuffFactory.createEffect(t, 'invis', 10000);
+                    break;
+                case 'shrink': {
+                    flashMsg(`${t===p1?'P1':'P2'} thu nhỏ!`);
+                    const effShrink = applyEffect(t,'shrink',10000,
+                        state=>{
+                            state.originalRadius = t.r;
+                            t.r *= 0.7;
+                        },
+                        state=>{
+                            if(state && state.originalRadius!==undefined) t.r = state.originalRadius;
+                            else t.r = t.baseRadius;
+                        }
+                    );
+                    tagEffect(effShrink,'Thu nhỏ',buff.color);
+                    pickupFX.push({x:t.x,y:t.y,color:buff.color,start:now,duration:500});
+                    showStatus(t,'Thu nhỏ',buff.color);
+                    break;
+                }
+                case 'shield':
+                    BuffFactory.createEffect(t, 'shield', 10000);
+                    break;
+                case 'rapidfire': {
+                    flashMsg(`${t===p1?'P1':'P2'} hồi đạn nhanh!`);
+                    const effRapid = applyEffect(t,'rapidfire',10000,
+                        state=>{
+                            state.originalReloadRate = t.reloadRate;
+                            t.reloadRate = t.baseReloadRate * 5;
+                        },
+                        state=>{
+                            if(state && state.originalReloadRate!==undefined) t.reloadRate = state.originalReloadRate;
+                            else t.reloadRate = t.baseReloadRate;
+                        }
+                    );
+                    tagEffect(effRapid,'Nạp nhanh',buff.color);
+                    pickupFX.push({x:t.x,y:t.y,color:buff.color,start:now,duration:500});
+                    showStatus(t,'Nạp nhanh',buff.color);
+                    break;
+                }
+                case 'bigbullet':
+                    BuffFactory.createEffect(t, 'bigbullet', 10000);
+                    break;
+                case 'clone':
+                    flashMsg(`${t===p1?'P1':'P2'} tạo phân thân!`);
+                    spawnClone(t);
+                    pickupFX.push({x:t.x,y:t.y,color:buff.color,start:now,duration:500});
+                    showStatus(t,'Phân thân',buff.color);
+                    break;
+                case 'shotgun':
+                    BuffFactory.createEffect(t, 'shotgun', 10000);
+                    break;
+                case 'ricochet':
+                    BuffFactory.createEffect(t, 'ricochet', 10000);
+                    break;
+                case 'explosive':
+                    BuffFactory.createEffect(t, 'explosive', 10000);
+                    break;
+                case 'pierce':
+                    BuffFactory.createEffect(t, 'pierce', 10000);
+                    break;
+                case 'poison':
+                    BuffFactory.createEffect(t, 'poisonShots', 10000);
+                    break;
+                case 'nuke': {
+                    flashMsg('Bom nguyên tử kích hoạt!');
+                    const nukeColor = buff.color || BUFF_COLORS.nuke;
+                    tanks.forEach(tk=>{
+                        const isPlayer = (tk === p1 || tk === p2);
+                        if(tk.hp > 0 && !(devGodMode && isPlayer)){
+                            tk.hp = Math.min(tk.maxHp, 0.1);
+                            pickupFX.push({x:tk.x,y:tk.y,color:nukeColor,start:now,duration:600});
+                            showStatus(tk,'HP = 0.1',nukeColor,1200);
+                        }
+                    });
+                    explosions.push({
+                        x: W/2,
+                        y: H/2,
+                        radius: Math.max(W,H),
+                        startTime: performance.now(),
+                        duration: 600
+                    });
+                    break;
+                }
+                case 'trail':
+                    BuffFactory.createEffect(t, 'trail', 10000);
+                    break;
+                case 'fury': {
+                    flashMsg(`${t===p1?'P1':'P2'} cuồng nộ!`);
+                    const effFury = applyEffect(t,'fury',10000,
+                        state=>{
+                            state.drainTimer = 0;
+                            t.fury = true;
+                        },
+                        state=>{
+                            t.fury = false;
+                        },
+                        (dt, tank, state) => {
+                            // onUpdate function - drain HP and stop when HP <= 0.1
+                            if(tank.hp <= 0.1) {
+                                // Stop the effect early
+                                state.cancelled = true;
+                                tank.fury = false;
+                                return;
+                            }
+                            state.drainTimer += dt;
+                            if(state.drainTimer >= 1000) { // Every 1 second
+                                tank.hp = Math.max(0.1, tank.hp - 0.1);
+                                state.drainTimer = 0;
+                                showStatus(tank,'-0.1 HP','#dc143c',600);
+                            }
+                        }
+                    );
+                    tagEffect(effFury,'Cuồng nộ',buff.color);
+                    pickupFX.push({x:t.x,y:t.y,color:buff.color,start:now,duration:500});
+                    showStatus(t,'Cuồng nộ',buff.color);
+                    break;
+                }
+                
+                case 'giantEnemy': {
+                    const enemy = debuffTarget || ((t===p1)?p2:p1);
+                    flashMsg(`${t===p1?'P1':'P2'} tăng kích thước ${enemy === boss ? 'boss' : 'đối thủ'}!`);
+                    const effGiant = applyEffect(enemy,'giantEnemy',10000,
+                        state=>{
+                            state.originalRadius = enemy.r;
+                            enemy.r *= 1.5;
+                            enemy.displayRadius = enemy.r;
+                        },
+                        state=>{
+                            if(state && state.originalRadius!==undefined) enemy.r = state.originalRadius;
+                            else enemy.r = enemy.baseRadius;
+                            enemy.displayRadius = enemy.r;
+                        }
+                    );
+                    tagEffect(effGiant,'Khổng lồ',buff.color);
+                    pickupFX.push({x:t.x,y:t.y,color:buff.color,start:now,duration:500});
+                    showStatus(t,'Khổng lồ',buff.color);
+                    showStatus(enemy,'Bị phóng to!',buff.color,2000);
+                    break;
+                }
+                
+                case 'reverse': {
+                    const ctrlEnemy = debuffTarget || ((t===p1)?p2:p1);
+                    
+                    // Boss không bị đảo phím (vì boss không dùng controls)
+                    if (ctrlEnemy === boss) {
+                        flashMsg('Boss miễn nhiễm đảo phím!');
+                        break;
+                    }
+                    
+                    flashMsg(`${t===p1?'P1':'P2'} đảo ngược phím đối thủ!`);
+                    const effReverse = applyEffect(ctrlEnemy,'reverse',10000,
+                        state=>{
+                            state.originalControls = {...ctrlEnemy.controls};
+                            ctrlEnemy.controls = {
+                                forward: state.originalControls.back,
+                                back: state.originalControls.forward,
+                                left: state.originalControls.right,
+                                right: state.originalControls.left,
+                                shoot: state.originalControls.shoot
+                            };
+                        },
+                        state=>{
+                            if(state && state.originalControls){
+                                ctrlEnemy.controls = {...state.originalControls};
+                            } else if(ctrlEnemy.baseControls){
+                                ctrlEnemy.controls = {...ctrlEnemy.baseControls};
+                            }
+                        }
+                    );
+                    tagEffect(effReverse,'Đảo phím',buff.color);
+                    pickupFX.push({x:t.x,y:t.y,color:buff.color,start:now,duration:500});
+                    showStatus(t,'Đảo phím',buff.color);
+                    showStatus(ctrlEnemy,'Phím bị đảo',buff.color,2000);
+                    break;
+                }
+                
+                case 'root': {
+                    const target = debuffTarget || ((t===p1)?p2:p1);
+                    flashMsg(`${t===p1?'P1':'P2'} khoá chân ${target === boss ? 'boss' : 'đối thủ'}!`);
+                    const effRoot = applyEffect(target,'root',5000,
+                        ()=>{target.rooted = true;},
+                        ()=>{target.rooted = false;}
+                    );
+                    tagEffect(effRoot,'Bị trói chân',buff.color);
+                    pickupFX.push({x:t.x,y:t.y,color:buff.color,start:now,duration:500});
+                    showStatus(t,'Trói chân',buff.color);
+                    showStatus(target,'Bị trói chân',buff.color,2000);
+                    break;
+                }
+                
+                case 'silence': {
+                    const enemy = debuffTarget || ((t===p1)?p2:p1);
+                    flashMsg(`${t===p1?'P1':'P2'} cấm ${enemy === boss ? 'boss' : 'đối thủ'} bắn!`);
+                    enemy.shootHoldTime = 0;
+                    enemy.chargeState = 'idle';
+                    enemy.wasShootDown = false;
+                    const effSilence = applyEffect(enemy,'silence',8000,
+                        ()=>{enemy.silenced = true;},
+                        ()=>{enemy.silenced = false;}
+                    );
+                    tagEffect(effSilence,'Câm lặng',buff.color);
+                    pickupFX.push({x:t.x,y:t.y,color:buff.color,start:now,duration:500});
+                    showStatus(t,'Câm lặng',buff.color);
+                    showStatus(enemy,'Không thể bắn!',buff.color,2000);
+                    break;
+                }
+                
+                case 'possession': {
+                    const enemy = debuffTarget || ((t===p1)?p2:p1);
+                    
+                    // Boss không bị quỷ nhập
+                    if (enemy === boss) {
+                        flashMsg('Boss miễn nhiễm quỷ nhập!');
+                        break;
+                    }
+                    
+                    flashMsg(`${t===p1?'P1':'P2'} quỷ nhập đối thủ!`);
+                    const effPossession = applyEffect(enemy,'possession',5000,
+                        ()=>{enemy.possession = true; enemy.possessionFired = false;},
+                        ()=>{enemy.possession = false; enemy.possessionFired = false;}
+                    );
+                    tagEffect(effPossession,'Quỷ nhập',buff.color);
+                    pickupFX.push({x:t.x,y:t.y,color:buff.color,start:now,duration:500});
+                    showStatus(t,'Quỷ nhập',buff.color);
+                    showStatus(enemy,'Bị quỷ nhập!',buff.color,2000);
+                    break;
+                }
+                
+                // ... other cases remain the same ...
             }
-        );
-        tagEffect(effRapid,'Nạp nhanh',buff.color);
-        pickupFX.push({x:t.x,y:t.y,color:buff.color,start:now,duration:500});
-        showStatus(t,'Nạp nhanh',buff.color);
-        break;
-    }
-    case 'bigbullet':
-        BuffFactory.createEffect(t, 'bigbullet', 10000);
-        break;
-    case 'clone':
-        flashMsg(`${t===p1?'P1':'P2'} tạo phân thân!`);
-        spawnClone(t);
-        pickupFX.push({x:t.x,y:t.y,color:buff.color,start:now,duration:500});
-        showStatus(t,'Phân thân',buff.color);
-        break;
-    
-        case 'shotgun':
-        BuffFactory.createEffect(t, 'shotgun', 10000);
-        break;
-    case 'ricochet':
-        BuffFactory.createEffect(t, 'ricochet', 10000);
-        break;
-    case 'giantEnemy': {
-        const enemy = t===p1?p2:p1;
-        flashMsg(`${t===p1?'P1':'P2'} tăng kích thước đối thủ!`);
-        const effGiant = applyEffect(enemy,'giantEnemy',10000,
-            state=>{
-                state.originalRadius = enemy.r;
-                enemy.r *= 1.5;
-                enemy.displayRadius = enemy.r;
-            },
-            state=>{
-                if(state && state.originalRadius!==undefined) enemy.r = state.originalRadius;
-                else enemy.r = enemy.baseRadius;
-                enemy.displayRadius = enemy.r;
-            }
-        );
-        tagEffect(effGiant,'Khổng lồ',buff.color);
-        pickupFX.push({x:t.x,y:t.y,color:buff.color,start:now,duration:500});
-        showStatus(t,'Khổng lồ',buff.color);
-        showStatus(enemy,'Bị phóng to!',buff.color,2000);
-        break;
-    }
-        case 'reverse': {
-    const ctrlEnemy = t===p1?p2:p1;
-    flashMsg(`${t===p1?'P1':'P2'} đảo ngược phím đối thủ!`);
-    const effReverse = applyEffect(ctrlEnemy,'reverse',10000,
-        state=>{
-            state.originalControls = {...ctrlEnemy.controls};
-            ctrlEnemy.controls = {
-                forward: state.originalControls.back,
-                back: state.originalControls.forward,
-                left: state.originalControls.right,
-                right: state.originalControls.left,
-                shoot: state.originalControls.shoot
-            };
-        },
-        state=>{
-            if(state && state.originalControls){
-                ctrlEnemy.controls = {...state.originalControls};
-            } else if(ctrlEnemy.baseControls){
-                ctrlEnemy.controls = {...ctrlEnemy.baseControls};
-            }
+            
+            buff.active=false;
         }
-    );
-    tagEffect(effReverse,'Đảo phím',buff.color);
-    pickupFX.push({x:t.x,y:t.y,color:buff.color,start:now,duration:500});
-    showStatus(t,'Đảo phím',buff.color);
-    showStatus(ctrlEnemy,'Phím bị đảo',buff.color,2000);
-    break;
-    }
-    case 'explosive':
-        BuffFactory.createEffect(t, 'explosive', 10000);
-        break;
-        case 'root': {
-    const target = t===p1?p2:p1;
-    flashMsg(`${t===p1?'P1':'P2'} khoá chân đối thủ!`);
-    const effRoot = applyEffect(target,'root',5000,
-        ()=>{target.rooted = true;},
-        ()=>{target.rooted = false;}
-    );
-    tagEffect(effRoot,'Bị trói chân',buff.color);
-    pickupFX.push({x:t.x,y:t.y,color:buff.color,start:now,duration:500});
-    showStatus(t,'Trói chân',buff.color);
-    showStatus(target,'Bị trói chân',buff.color,2000);
-    break;
-    }
-    case 'silence': {
-        const enemy = t===p1?p2:p1;
-        flashMsg(`${t===p1?'P1':'P2'} cấm đối thủ bắn!`);
-        enemy.shootHoldTime = 0;
-        enemy.chargeState = 'idle';
-        enemy.wasShootDown = false;
-        const effSilence = applyEffect(enemy,'silence',8000,
-            ()=>{enemy.silenced = true;},
-            ()=>{enemy.silenced = false;}
-        );
-        tagEffect(effSilence,'Câm lặng',buff.color);
-        pickupFX.push({x:t.x,y:t.y,color:buff.color,start:now,duration:500});
-        showStatus(t,'Câm lặng',buff.color);
-        showStatus(enemy,'Không thể bắn!',buff.color,2000);
-        break;
-    }
-    case 'pierce':
-        BuffFactory.createEffect(t, 'pierce', 10000);
-        break;
-    case 'poison':
-        BuffFactory.createEffect(t, 'poisonShots', 10000);
-        break;
-    case 'nuke': {
-        flashMsg('Bom nguyên tử kích hoạt!');
-        const nukeColor = buff.color || BUFF_COLORS.nuke;
-        tanks.forEach(tk=>{
-            const isPlayer = (tk === p1 || tk === p2);
-            if(tk.hp > 0 && !(devGodMode && isPlayer)){
-                tk.hp = Math.min(tk.maxHp, 0.1);
-                pickupFX.push({x:tk.x,y:tk.y,color:nukeColor,start:now,duration:600});
-                showStatus(tk,'HP = 0.1',nukeColor,1200);
-            }
-        });
-        explosions.push({
-            x: W/2,
-            y: H/2,
-            radius: Math.max(W,H),
-            startTime: performance.now(),
-            duration: 600
-        });
-    break;
-    }
-    case 'possession': {
-        const enemy = t===p1?p2:p1;
-        flashMsg(`${t===p1?'P1':'P2'} quỷ nhập đối thủ!`);
-        const effPossession = applyEffect(enemy,'possession',5000,
-            ()=>{enemy.possession = true; enemy.possessionFired = false;},
-            ()=>{enemy.possession = false; enemy.possessionFired = false;}
-        );
-        tagEffect(effPossession,'Quỷ nhập',buff.color);
-        pickupFX.push({x:t.x,y:t.y,color:buff.color,start:now,duration:500});
-        showStatus(t,'Quỷ nhập',buff.color);
-        showStatus(enemy,'Bị quỷ nhập!',buff.color,2000);
-        break;
-    }
-    case 'trail':
-        BuffFactory.createEffect(t, 'trail', 10000);
-        break;
-    case 'fireRate': {
-        flashMsg(`${t===p1?'P1':'P2'} tăng tốc độ bắn!`);
-        const effFireRate = applyEffect(t,'fireRate',10000,
-            state=>{
-                state.originalReload = t.reload;
-                t.reload = Math.max(50, t.baseReload * 0.3); // Reduce reload time by 70%
-            },
-            state=>{
-                if(state && state.originalReload!==undefined) t.reload = state.originalReload;
-                else t.reload = t.baseReload;
-            }
-        );
-        tagEffect(effFireRate,'Tăng tốc bắn',buff.color);
-        pickupFX.push({x:t.x,y:t.y,color:buff.color,start:now,duration:500});
-        showStatus(t,'Tăng tốc bắn',buff.color);
-        break;
-    }
-    case 'fury': {
-        flashMsg(`${t===p1?'P1':'P2'} cuồng nộ!`);
-        const effFury = applyEffect(t,'fury',10000,
-            state=>{
-                state.drainTimer = 0;
-                t.fury = true;
-            },
-            state=>{
-                t.fury = false;
-            },
-            (dt, tank, state) => {
-                // onUpdate function - drain HP and stop when HP <= 0.1
-                if(tank.hp <= 0.1) {
-                    // Stop the effect early
-                    state.cancelled = true;
-                    tank.fury = false;
-                    return;
-                }
-                state.drainTimer += dt;
-                if(state.drainTimer >= 1000) { // Every 1 second
-                    tank.hp = Math.max(0.1, tank.hp - 0.1);
-                    state.drainTimer = 0;
-                    showStatus(tank,'-0.1 HP','#dc143c',600);
-                }
-            }
-        );
-        tagEffect(effFury,'Cuồng nộ',buff.color);
-        pickupFX.push({x:t.x,y:t.y,color:buff.color,start:now,duration:500});
-        showStatus(t,'Cuồng nộ',buff.color);
-        break;
     }
 }
-
-
-                buff.active=false;
-            }
-        }
-    }
     buffs = buffs.filter(b => b.active);
 
     // Optimized explosion cleanup
@@ -4495,22 +6769,38 @@ if(!roundEnding && gameMode === 'pvp' && boss && p1.hp <= 0 && p2.hp <= 0){
             const elapsed = now - exp.startTime;
             const progress = elapsed / exp.duration;
             const alpha = 1 - progress;
-            const currentRadius = exp.radius * (0.5 + progress * 0.5);
+            const currentRadius = Math.max(0, (exp.size || exp.radius) * (0.5 + progress * 0.5));
             
-            // Fill
-            ctx.globalAlpha = alpha * 0.6;
-            ctx.fillStyle = '#f44';
-            ctx.beginPath();
-            ctx.arc(exp.x, exp.y, currentRadius, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // Stroke
-            ctx.globalAlpha = alpha * 0.8;
-            ctx.strokeStyle = '#f00';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.arc(exp.x, exp.y, currentRadius, 0, Math.PI * 2);
-            ctx.stroke();
+            if (exp.isWave) {
+                // Wave effect for howl
+                ctx.globalAlpha = alpha * 0.4;
+                ctx.strokeStyle = exp.color || '#6366f1';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.arc(exp.x, exp.y, currentRadius, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                ctx.globalAlpha = alpha * 0.2;
+                ctx.lineWidth = 8;
+                ctx.beginPath();
+                ctx.arc(exp.x, exp.y, currentRadius * 1.2, 0, Math.PI * 2);
+                ctx.stroke();
+            } else {
+                // Normal explosion
+                ctx.globalAlpha = alpha * 0.6;
+                ctx.fillStyle = exp.color || '#f44';
+                ctx.beginPath();
+                ctx.arc(exp.x, exp.y, currentRadius, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Stroke
+                ctx.globalAlpha = alpha * 0.8;
+                ctx.strokeStyle = exp.color || '#f00';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(exp.x, exp.y, currentRadius, 0, Math.PI * 2);
+                ctx.stroke();
+            }
         });
         ctx.restore();
     }
@@ -4645,11 +6935,74 @@ document.addEventListener('keydown', e=>{
         case 'p': spawnBuff('nuke'); flashMsg('Tạo buff: bom nguyên tử'); break;
         case 'j': spawnBuff('trail'); flashMsg('Tạo buff: dung nham'); break;
         case 'l': spawnBuff('possession'); flashMsg('Tạo buff: thôi miên'); break;
-        case 'z': spawnBuff('fireRate'); flashMsg('Tạo buff: tăng tốc độ bắn'); break;
         case 'x': spawnBuff('fury'); flashMsg('Tạo buff: cuồng nộ'); break;
 
         // PHÍM KHÁC (giữ nguyên các chức năng Dev Mode hiện tại)
         case 'h': p1.hp=p1.maxHp; p2.hp=p2.maxHp; flashMsg('HP full'); break;
+        case 'm':
+            devOneHitKill = !devOneHitKill;
+            flashMsg(devOneHitKill ? '1 Hit Kill ON' : '1 Hit Kill OFF');
+            if(devOneHitKill){
+                showStatus(p1,'Sát thương 999999','#ff0000',900);
+                showStatus(p2,'Sát thương 999999','#ff0000',900);
+            }
+            syncSettingsUI();
+            break;
+        case 't': 
+            // TEST: Force slime boss jump
+            if (boss && boss.bossType === 'slime') {
+                boss.jumpAttack(p1);
+                flashMsg('🧪 TEST: Force slime jump!');
+            }
+            break;
+        case '3':
+            // TEST: Add ALL buffs
+            if (gameMode === 'vsboss') {
+                console.log('🧪 ADDING ALL BUFFS');
+                const allBuffs = ['muscle', 'thickSkin', 'agility', 'bulletSpeed'];
+                allBuffs.forEach(buff => {
+                    if (!bossMode.permanentBuffs.includes(buff)) {
+                        bossMode.permanentBuffs.push(buff);
+                        applyBossModeBuff(buff);
+                    }
+                });
+                console.log('All buffs added:', bossMode.permanentBuffs);
+                console.log('P1 final stats:', {
+                    damage: p1.damage, 
+                    maxHp: p1.maxHp, 
+                    hp: p1.hp, 
+                    moveSpeed: p1.moveSpeed?.toFixed(3),
+                    bulletSpeed: p1.bulletSpeedMultiplier?.toFixed(2)
+                });
+                flashMsg('🧪 Added ALL buffs for testing!');
+            } else {
+                flashMsg('❌ Not in boss mode!');
+            }
+            break;
+        case '4':
+            // TEST: Clear all buffs
+            if (gameMode === 'vsboss') {
+                console.log('🧪 CLEARING ALL BUFFS');
+                console.log('Before clear:', bossMode.permanentBuffs);
+                bossMode.permanentBuffs = [];
+                reapplyPermanentBuffs();
+                console.log('After clear:', bossMode.permanentBuffs);
+                console.log('P1 stats after clear:', {damage: p1.damage, maxHp: p1.maxHp, hp: p1.hp});
+                flashMsg('🧪 Cleared all buffs!');
+            } else {
+                flashMsg('❌ Not in boss mode!');
+            }
+            break;
+        case '5':
+            // TEST: Manual bullet damage
+            const dmgTestBullet = new Bullet(p1.x + 50, p1.y, 0, p1);
+            console.log('🧪 TEST BULLET DAMAGE');
+            console.log('P1 damage:', p1.damage);
+            console.log('Bullet damage:', dmgTestBullet.damage);
+            console.log('P1 bossBuffStats:', p1.bossBuffStats);
+            bullets.push(dmgTestBullet);
+            flashMsg(`🧪 Test bullet: P1 dmg=${p1.damage}, bullet dmg=${dmgTestBullet.damage}`);
+            break;
         case 'b': {
             const devBullet = new Bullet(450,280,Math.random()*Math.PI*2,p1);
             styleBulletForOwner(devBullet, p1);
@@ -4658,6 +7011,29 @@ document.addEventListener('keydown', e=>{
             break;
         }
         case 'o': resetAfterKill(); flashMsg('Reset game'); break;
+        case '1': 
+            // TEST ALL FIXES
+            console.log('🧪 TESTING ALL FIXES:');
+            console.log('1. Slime jump cooldown:', boss?.skillCooldowns?.jump);
+            console.log('2. Boss mode buffs:', bossMode.permanentBuffs);
+            console.log('3. Game mode:', gameMode);
+            console.log('4. P1 stats:', {hp: p1.hp, damage: p1.damage, maxHp: p1.maxHp, moveSpeed: p1.moveSpeed, bulletSpeed: p1.bulletSpeedMultiplier});
+            console.log('5. P1 bossBuffStats:', p1.bossBuffStats);
+            console.log('6. Boss exists:', !!boss, boss?.bossType);
+            flashMsg('🧪 Check console for test results!');
+            break;
+        case '2':
+            // TEST BUFF REAPPLY
+            if (gameMode === 'vsboss') {
+                console.log('🔄 MANUAL BUFF REAPPLY TEST');
+                console.log('Before reapply - P1:', {damage: p1.damage, maxHp: p1.maxHp, moveSpeed: p1.moveSpeed, bulletSpeed: p1.bulletSpeedMultiplier});
+                reapplyPermanentBuffs();
+                console.log('After reapply - P1:', {damage: p1.damage, maxHp: p1.maxHp, moveSpeed: p1.moveSpeed, bulletSpeed: p1.bulletSpeedMultiplier});
+                flashMsg('🔄 Buff reapply test completed!');
+            } else {
+                flashMsg('❌ Not in boss mode!');
+            }
+            break;
         case 'f': p1.reloadRate*=5; p2.reloadRate*=5; flashMsg('Fast reload'); break;
         case 'k': spawnBuff('silence'); flashMsg('Tạo buff: câm lặng'); break;
         case 'n':
@@ -4683,10 +7059,12 @@ canvas.addEventListener('mousemove', e => {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     
-    gameUI.settingsBtn.hovered = (x >= gameUI.settingsBtn.x && x <= gameUI.settingsBtn.x + gameUI.settingsBtn.w &&
-                                  y >= gameUI.settingsBtn.y && y <= gameUI.settingsBtn.y + gameUI.settingsBtn.h);
+    gameUI.homeBtn.hovered = (x >= gameUI.homeBtn.x && x <= gameUI.homeBtn.x + gameUI.homeBtn.w &&
+                              y >= gameUI.homeBtn.y && y <= gameUI.homeBtn.y + gameUI.homeBtn.h);
     gameUI.helpBtn.hovered = (x >= gameUI.helpBtn.x && x <= gameUI.helpBtn.x + gameUI.helpBtn.w &&
                               y >= gameUI.helpBtn.y && y <= gameUI.helpBtn.y + gameUI.helpBtn.h);
+    gameUI.settingsBtn.hovered = (x >= gameUI.settingsBtn.x && x <= gameUI.settingsBtn.x + gameUI.settingsBtn.w &&
+                                  y >= gameUI.settingsBtn.y && y <= gameUI.settingsBtn.y + gameUI.settingsBtn.h);
 });
 
 canvas.addEventListener('click', e => {
@@ -4694,15 +7072,24 @@ canvas.addEventListener('click', e => {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     
-    if(x >= gameUI.settingsBtn.x && x <= gameUI.settingsBtn.x + gameUI.settingsBtn.w &&
-       y >= gameUI.settingsBtn.y && y <= gameUI.settingsBtn.y + gameUI.settingsBtn.h) {
-        toggleSettingsPanel();
+    // Home button
+    if(x >= gameUI.homeBtn.x && x <= gameUI.homeBtn.x + gameUI.homeBtn.w &&
+       y >= gameUI.homeBtn.y && y <= gameUI.homeBtn.y + gameUI.homeBtn.h) {
+        returnToMainMenu();
         return;
     }
     
+    // Help button
     if(x >= gameUI.helpBtn.x && x <= gameUI.helpBtn.x + gameUI.helpBtn.w &&
        y >= gameUI.helpBtn.y && y <= gameUI.helpBtn.y + gameUI.helpBtn.h) {
         toggleInstructionsPanel();
+        return;
+    }
+    
+    // Settings button
+    if(x >= gameUI.settingsBtn.x && x <= gameUI.settingsBtn.x + gameUI.settingsBtn.w &&
+       y >= gameUI.settingsBtn.y && y <= gameUI.settingsBtn.y + gameUI.settingsBtn.h) {
+        toggleSettingsPanel();
         return;
     }
     
